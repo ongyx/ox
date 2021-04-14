@@ -2,7 +2,7 @@
 
 import pathlib
 
-from oxlang import assignment
+import oxlang
 
 curdir = pathlib.Path(__file__).parent
 
@@ -10,4 +10,5 @@ curdir = pathlib.Path(__file__).parent
 def test_syntax():
 
     for file in curdir.glob("*.cub"):
-        assignment.runTests(file.read_text())
+        tree = oxlang.Parser.searchString(file.read_text())
+        assert len(tree) > 0

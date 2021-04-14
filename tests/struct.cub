@@ -1,0 +1,5 @@
+struct Point {
+x, y
+}
+
+myPoint = Point(1 + (2 + (3)), 2, 3) + Point(1,2)
