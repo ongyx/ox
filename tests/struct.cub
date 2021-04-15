@@ -1,5 +1,12 @@
 struct Point {
-x, y
+  x, y
 }
 
+
+func Point.distance(self) {
+  return (self.x ^ 2) + (self.y ^ 2)
+}
+
+
+// syntactically correct, but invalid (can't add structs together)
 myPoint = Point(1 + (2 + (3)), 2, 3) + Point(1,2)

@@ -14,7 +14,7 @@ classifiers = [
 ]
 description-file = "README.md"
 requires = [
-    "pyparsing>=2.4.7",
+    "sly>=0.4",
 ]
 requires-python = ">=3.6"
 

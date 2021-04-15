@@ -1,5 +1,8 @@
-# nested expressions
+// nested expressions
 lol = 1 + (2 + (3 + (4 + (5))))
 
-# in-place arithmetic
+// in-place arithmetic
 qwerty += lol + nil
+
+lol = "0"
+lol = '0'
