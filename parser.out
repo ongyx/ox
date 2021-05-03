@@ -1,0 +1,2481 @@
+Grammar:
+
+Rule 0     S' -> body
+Rule 1     body -> _1_repeat
+Rule 2     _1_repeat -> _1_items
+Rule 3     _1_repeat -> <empty>
+Rule 4     _1_items -> _1_items _1_item
+Rule 5     _1_items -> _1_item
+Rule 6     _1_item -> declaration
+Rule 7     declaration -> cond
+Rule 8     declaration -> struct
+Rule 9     declaration -> func
+Rule 10    declaration -> statement
+Rule 11    func -> FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE
+Rule 12    _2_optional -> args
+Rule 13    _2_optional -> <empty>
+Rule 14    struct -> STRUCT ID LBRACE args RBRACE
+Rule 15    args -> ID _3_repeat
+Rule 16    _3_repeat -> _3_items
+Rule 17    _3_repeat -> <empty>
+Rule 18    _3_items -> _3_items _3_item
+Rule 19    _3_items -> _3_item
+Rule 20    _3_item -> COMMA ID
+Rule 21    cond -> cond_if _4_repeat _5_optional
+Rule 22    _4_repeat -> _4_items
+Rule 23    _4_repeat -> <empty>
+Rule 24    _4_items -> _4_items _4_item
+Rule 25    _4_items -> _4_item
+Rule 26    _4_item -> cond_elseif
+Rule 27    _5_optional -> cond_else
+Rule 28    _5_optional -> <empty>
+Rule 29    cond_if -> IF expr LBRACE body RBRACE
+Rule 30    cond_elseif -> ELSE cond_if
+Rule 31    cond_else -> ELSE LBRACE body RBRACE
+Rule 32    statement -> ID POWER ASSIGN expr
+Rule 33    statement -> ID DIVIDE ASSIGN expr
+Rule 34    statement -> ID TIMES ASSIGN expr
+Rule 35    statement -> ID MINUS ASSIGN expr
+Rule 36    statement -> ID PLUS ASSIGN expr
+Rule 37    statement -> ID ASSIGN expr
+Rule 38    expr -> ID LPAREN RPAREN
+Rule 39    expr -> LPAREN expr RPAREN
+Rule 40    expr -> ID
+Rule 41    expr -> NUMBER
+Rule 42    expr -> STRING
+Rule 43    expr -> expr NOT expr  [precedence=left, level=3]
+Rule 44    expr -> expr OR expr  [precedence=left, level=1]
+Rule 45    expr -> expr AND expr  [precedence=left, level=2]
+Rule 46    expr -> expr NE expr  [precedence=left, level=4]
+Rule 47    expr -> expr GT expr  [precedence=left, level=4]
+Rule 48    expr -> expr GE expr  [precedence=left, level=4]
+Rule 49    expr -> expr LT expr  [precedence=left, level=4]
+Rule 50    expr -> expr LE expr  [precedence=left, level=4]
+Rule 51    expr -> expr EQ expr  [precedence=left, level=4]
+Rule 52    expr -> expr POWER expr  [precedence=left, level=7]
+Rule 53    expr -> expr DIVIDE expr  [precedence=left, level=6]
+Rule 54    expr -> expr TIMES expr  [precedence=left, level=6]
+Rule 55    expr -> expr MINUS expr  [precedence=left, level=5]
+Rule 56    expr -> expr PLUS expr  [precedence=left, level=5]
+Rule 57    func_call_args -> expr _6_repeat
+Rule 58    _6_repeat -> _6_items
+Rule 59    _6_repeat -> <empty>
+Rule 60    _6_items -> _6_items _6_item
+Rule 61    _6_items -> _6_item
+Rule 62    _6_item -> COMMA expr
+Rule 63    empty -> <empty>
+
+Unused terminals:
+
+    BREAK
+    RETURN
+    FALSE
+    TRUE
+    FOR
+    RBRACK
+    LBRACK
+    CONTINUE
+    WHILE
+    RETURNS
+    NIL
+
+Terminals, with rules where they appear:
+
+AND                  : 45
+ASSIGN               : 32 33 34 35 36 37
+BREAK                : 
+COMMA                : 20 62
+CONTINUE             : 
+DIVIDE               : 33 53
+ELSE                 : 30 31
+EQ                   : 51
+FALSE                : 
+FOR                  : 
+FUNC                 : 11
+GE                   : 48
+GT                   : 47
+ID                   : 11 14 15 20 32 33 34 35 36 37 38 40
+IF                   : 29
+LBRACE               : 11 14 29 31
+LBRACK               : 
+LE                   : 50
+LPAREN               : 11 38 39
+LT                   : 49
+MINUS                : 35 55
+NE                   : 46
+NIL                  : 
+NOT                  : 43
+NUMBER               : 41
+OR                   : 44
+PLUS                 : 36 56
+POWER                : 32 52
+RBRACE               : 11 14 29 31
+RBRACK               : 
+RETURN               : 
+RETURNS              : 
+RPAREN               : 11 38 39
+STRING               : 42
+STRUCT               : 14
+TIMES                : 34 54
+TRUE                 : 
+WHILE                : 
+error                : 
+
+Nonterminals, with rules where they appear:
+
+_1_item              : 4 5
+_1_items             : 2 4
+_1_repeat            : 1
+_2_optional          : 11
+_3_item              : 18 19
+_3_items             : 16 18
+_3_repeat            : 15
+_4_item              : 24 25
+_4_items             : 22 24
+_4_repeat            : 21
+_5_optional          : 21
+_6_item              : 60 61
+_6_items             : 58 60
+_6_repeat            : 57
+args                 : 12 14
+body                 : 11 29 31 0
+cond                 : 7
+cond_else            : 27
+cond_elseif          : 26
+cond_if              : 21 30
+declaration          : 6
+empty                : 
+expr                 : 29 32 33 34 35 36 37 39 43 43 44 44 45 45 46 46 47 47 48 48 49 49 50 50 51 51 52 52 53 53 54 54 55 55 56 56 57 62
+func                 : 9
+func_call_args       : 
+statement            : 10
+struct               : 8
+
+
+state 0
+
+    (0) S' -> . body
+    (1) body -> . _1_repeat
+    (2) _1_repeat -> . _1_items
+    (3) _1_repeat -> .
+    (4) _1_items -> . _1_items _1_item
+    (5) _1_items -> . _1_item
+    (6) _1_item -> . declaration
+    (7) declaration -> . cond
+    (8) declaration -> . struct
+    (9) declaration -> . func
+    (10) declaration -> . statement
+    (21) cond -> . cond_if _4_repeat _5_optional
+    (14) struct -> . STRUCT ID LBRACE args RBRACE
+    (11) func -> . FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE
+    (32) statement -> . ID POWER ASSIGN expr
+    (33) statement -> . ID DIVIDE ASSIGN expr
+    (34) statement -> . ID TIMES ASSIGN expr
+    (35) statement -> . ID MINUS ASSIGN expr
+    (36) statement -> . ID PLUS ASSIGN expr
+    (37) statement -> . ID ASSIGN expr
+    (29) cond_if -> . IF expr LBRACE body RBRACE
+    $end            reduce using rule 3 (_1_repeat -> .)
+    STRUCT          shift and go to state 11
+    FUNC            shift and go to state 13
+    ID              shift and go to state 12
+    IF              shift and go to state 14
+
+    body                           shift and go to state 1
+    _1_repeat                      shift and go to state 2
+    _1_items                       shift and go to state 3
+    _1_item                        shift and go to state 4
+    declaration                    shift and go to state 5
+    cond                           shift and go to state 6
+    struct                         shift and go to state 7
+    func                           shift and go to state 8
+    statement                      shift and go to state 9
+    cond_if                        shift and go to state 10
+
+state 1
+
+    (0) S' -> body .
+
+
+state 2
+
+    (1) body -> _1_repeat .
+    $end            reduce using rule 1 (body -> _1_repeat .)
+    RBRACE          reduce using rule 1 (body -> _1_repeat .)
+
+
+state 3
+
+    (2) _1_repeat -> _1_items .
+    (4) _1_items -> _1_items . _1_item
+    (6) _1_item -> . declaration
+    (7) declaration -> . cond
+    (8) declaration -> . struct
+    (9) declaration -> . func
+    (10) declaration -> . statement
+    (21) cond -> . cond_if _4_repeat _5_optional
+    (14) struct -> . STRUCT ID LBRACE args RBRACE
+    (11) func -> . FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE
+    (32) statement -> . ID POWER ASSIGN expr
+    (33) statement -> . ID DIVIDE ASSIGN expr
+    (34) statement -> . ID TIMES ASSIGN expr
+    (35) statement -> . ID MINUS ASSIGN expr
+    (36) statement -> . ID PLUS ASSIGN expr
+    (37) statement -> . ID ASSIGN expr
+    (29) cond_if -> . IF expr LBRACE body RBRACE
+    $end            reduce using rule 2 (_1_repeat -> _1_items .)
+    RBRACE          reduce using rule 2 (_1_repeat -> _1_items .)
+    STRUCT          shift and go to state 11
+    FUNC            shift and go to state 13
+    ID              shift and go to state 12
+    IF              shift and go to state 14
+
+    _1_item                        shift and go to state 15
+    declaration                    shift and go to state 5
+    cond                           shift and go to state 6
+    struct                         shift and go to state 7
+    func                           shift and go to state 8
+    statement                      shift and go to state 9
+    cond_if                        shift and go to state 10
+
+state 4
+
+    (5) _1_items -> _1_item .
+    STRUCT          reduce using rule 5 (_1_items -> _1_item .)
+    FUNC            reduce using rule 5 (_1_items -> _1_item .)
+    ID              reduce using rule 5 (_1_items -> _1_item .)
+    IF              reduce using rule 5 (_1_items -> _1_item .)
+    $end            reduce using rule 5 (_1_items -> _1_item .)
+    RBRACE          reduce using rule 5 (_1_items -> _1_item .)
+
+
+state 5
+
+    (6) _1_item -> declaration .
+    STRUCT          reduce using rule 6 (_1_item -> declaration .)
+    FUNC            reduce using rule 6 (_1_item -> declaration .)
+    ID              reduce using rule 6 (_1_item -> declaration .)
+    IF              reduce using rule 6 (_1_item -> declaration .)
+    $end            reduce using rule 6 (_1_item -> declaration .)
+    RBRACE          reduce using rule 6 (_1_item -> declaration .)
+
+
+state 6
+
+    (7) declaration -> cond .
+    STRUCT          reduce using rule 7 (declaration -> cond .)
+    FUNC            reduce using rule 7 (declaration -> cond .)
+    ID              reduce using rule 7 (declaration -> cond .)
+    IF              reduce using rule 7 (declaration -> cond .)
+    $end            reduce using rule 7 (declaration -> cond .)
+    RBRACE          reduce using rule 7 (declaration -> cond .)
+
+
+state 7
+
+    (8) declaration -> struct .
+    STRUCT          reduce using rule 8 (declaration -> struct .)
+    FUNC            reduce using rule 8 (declaration -> struct .)
+    ID              reduce using rule 8 (declaration -> struct .)
+    IF              reduce using rule 8 (declaration -> struct .)
+    $end            reduce using rule 8 (declaration -> struct .)
+    RBRACE          reduce using rule 8 (declaration -> struct .)
+
+
+state 8
+
+    (9) declaration -> func .
+    STRUCT          reduce using rule 9 (declaration -> func .)
+    FUNC            reduce using rule 9 (declaration -> func .)
+    ID              reduce using rule 9 (declaration -> func .)
+    IF              reduce using rule 9 (declaration -> func .)
+    $end            reduce using rule 9 (declaration -> func .)
+    RBRACE          reduce using rule 9 (declaration -> func .)
+
+
+state 9
+
+    (10) declaration -> statement .
+    STRUCT          reduce using rule 10 (declaration -> statement .)
+    FUNC            reduce using rule 10 (declaration -> statement .)
+    ID              reduce using rule 10 (declaration -> statement .)
+    IF              reduce using rule 10 (declaration -> statement .)
+    $end            reduce using rule 10 (declaration -> statement .)
+    RBRACE          reduce using rule 10 (declaration -> statement .)
+
+
+state 10
+
+    (21) cond -> cond_if . _4_repeat _5_optional
+    (22) _4_repeat -> . _4_items
+    (23) _4_repeat -> .
+    (24) _4_items -> . _4_items _4_item
+    (25) _4_items -> . _4_item
+    (26) _4_item -> . cond_elseif
+    (30) cond_elseif -> . ELSE cond_if
+  ! shift/reduce conflict for ELSE resolved as shift
+    STRUCT          reduce using rule 23 (_4_repeat -> .)
+    FUNC            reduce using rule 23 (_4_repeat -> .)
+    ID              reduce using rule 23 (_4_repeat -> .)
+    IF              reduce using rule 23 (_4_repeat -> .)
+    $end            reduce using rule 23 (_4_repeat -> .)
+    RBRACE          reduce using rule 23 (_4_repeat -> .)
+    ELSE            shift and go to state 20
+
+    _4_repeat                      shift and go to state 16
+    _4_items                       shift and go to state 17
+    _4_item                        shift and go to state 18
+    cond_elseif                    shift and go to state 19
+
+state 11
+
+    (14) struct -> STRUCT . ID LBRACE args RBRACE
+    ID              shift and go to state 21
+
+
+state 12
+
+    (32) statement -> ID . POWER ASSIGN expr
+    (33) statement -> ID . DIVIDE ASSIGN expr
+    (34) statement -> ID . TIMES ASSIGN expr
+    (35) statement -> ID . MINUS ASSIGN expr
+    (36) statement -> ID . PLUS ASSIGN expr
+    (37) statement -> ID . ASSIGN expr
+    POWER           shift and go to state 22
+    DIVIDE          shift and go to state 24
+    TIMES           shift and go to state 25
+    MINUS           shift and go to state 26
+    PLUS            shift and go to state 27
+    ASSIGN          shift and go to state 23
+
+
+state 13
+
+    (11) func -> FUNC . ID LPAREN _2_optional RPAREN LBRACE body RBRACE
+    ID              shift and go to state 28
+
+
+state 14
+
+    (29) cond_if -> IF . expr LBRACE body RBRACE
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 29
+
+state 15
+
+    (4) _1_items -> _1_items _1_item .
+    STRUCT          reduce using rule 4 (_1_items -> _1_items _1_item .)
+    FUNC            reduce using rule 4 (_1_items -> _1_items _1_item .)
+    ID              reduce using rule 4 (_1_items -> _1_items _1_item .)
+    IF              reduce using rule 4 (_1_items -> _1_items _1_item .)
+    $end            reduce using rule 4 (_1_items -> _1_items _1_item .)
+    RBRACE          reduce using rule 4 (_1_items -> _1_items _1_item .)
+
+
+state 16
+
+    (21) cond -> cond_if _4_repeat . _5_optional
+    (27) _5_optional -> . cond_else
+    (28) _5_optional -> .
+    (31) cond_else -> . ELSE LBRACE body RBRACE
+    STRUCT          reduce using rule 28 (_5_optional -> .)
+    FUNC            reduce using rule 28 (_5_optional -> .)
+    ID              reduce using rule 28 (_5_optional -> .)
+    IF              reduce using rule 28 (_5_optional -> .)
+    $end            reduce using rule 28 (_5_optional -> .)
+    RBRACE          reduce using rule 28 (_5_optional -> .)
+    ELSE            shift and go to state 36
+
+    _5_optional                    shift and go to state 34
+    cond_else                      shift and go to state 35
+
+state 17
+
+    (22) _4_repeat -> _4_items .
+    (24) _4_items -> _4_items . _4_item
+    (26) _4_item -> . cond_elseif
+    (30) cond_elseif -> . ELSE cond_if
+  ! shift/reduce conflict for ELSE resolved as shift
+    STRUCT          reduce using rule 22 (_4_repeat -> _4_items .)
+    FUNC            reduce using rule 22 (_4_repeat -> _4_items .)
+    ID              reduce using rule 22 (_4_repeat -> _4_items .)
+    IF              reduce using rule 22 (_4_repeat -> _4_items .)
+    $end            reduce using rule 22 (_4_repeat -> _4_items .)
+    RBRACE          reduce using rule 22 (_4_repeat -> _4_items .)
+    ELSE            shift and go to state 20
+
+    _4_item                        shift and go to state 37
+    cond_elseif                    shift and go to state 19
+
+state 18
+
+    (25) _4_items -> _4_item .
+    ELSE            reduce using rule 25 (_4_items -> _4_item .)
+    STRUCT          reduce using rule 25 (_4_items -> _4_item .)
+    FUNC            reduce using rule 25 (_4_items -> _4_item .)
+    ID              reduce using rule 25 (_4_items -> _4_item .)
+    IF              reduce using rule 25 (_4_items -> _4_item .)
+    $end            reduce using rule 25 (_4_items -> _4_item .)
+    RBRACE          reduce using rule 25 (_4_items -> _4_item .)
+
+
+state 19
+
+    (26) _4_item -> cond_elseif .
+    ELSE            reduce using rule 26 (_4_item -> cond_elseif .)
+    STRUCT          reduce using rule 26 (_4_item -> cond_elseif .)
+    FUNC            reduce using rule 26 (_4_item -> cond_elseif .)
+    ID              reduce using rule 26 (_4_item -> cond_elseif .)
+    IF              reduce using rule 26 (_4_item -> cond_elseif .)
+    $end            reduce using rule 26 (_4_item -> cond_elseif .)
+    RBRACE          reduce using rule 26 (_4_item -> cond_elseif .)
+
+
+state 20
+
+    (30) cond_elseif -> ELSE . cond_if
+    (29) cond_if -> . IF expr LBRACE body RBRACE
+    IF              shift and go to state 14
+
+    cond_if                        shift and go to state 38
+
+state 21
+
+    (14) struct -> STRUCT ID . LBRACE args RBRACE
+    LBRACE          shift and go to state 39
+
+
+state 22
+
+    (32) statement -> ID POWER . ASSIGN expr
+    ASSIGN          shift and go to state 40
+
+
+state 23
+
+    (37) statement -> ID ASSIGN . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 41
+
+state 24
+
+    (33) statement -> ID DIVIDE . ASSIGN expr
+    ASSIGN          shift and go to state 42
+
+
+state 25
+
+    (34) statement -> ID TIMES . ASSIGN expr
+    ASSIGN          shift and go to state 43
+
+
+state 26
+
+    (35) statement -> ID MINUS . ASSIGN expr
+    ASSIGN          shift and go to state 44
+
+
+state 27
+
+    (36) statement -> ID PLUS . ASSIGN expr
+    ASSIGN          shift and go to state 45
+
+
+state 28
+
+    (11) func -> FUNC ID . LPAREN _2_optional RPAREN LBRACE body RBRACE
+    LPAREN          shift and go to state 46
+
+
+state 29
+
+    (29) cond_if -> IF expr . LBRACE body RBRACE
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          shift and go to state 47
+    NOT             shift and go to state 48
+    OR              shift and go to state 49
+    AND             shift and go to state 50
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 30
+
+    (38) expr -> ID . LPAREN RPAREN
+    (40) expr -> ID .
+    LPAREN          shift and go to state 62
+    LBRACE          reduce using rule 40 (expr -> ID .)
+    NOT             reduce using rule 40 (expr -> ID .)
+    OR              reduce using rule 40 (expr -> ID .)
+    AND             reduce using rule 40 (expr -> ID .)
+    NE              reduce using rule 40 (expr -> ID .)
+    GT              reduce using rule 40 (expr -> ID .)
+    GE              reduce using rule 40 (expr -> ID .)
+    LT              reduce using rule 40 (expr -> ID .)
+    LE              reduce using rule 40 (expr -> ID .)
+    EQ              reduce using rule 40 (expr -> ID .)
+    POWER           reduce using rule 40 (expr -> ID .)
+    DIVIDE          reduce using rule 40 (expr -> ID .)
+    TIMES           reduce using rule 40 (expr -> ID .)
+    MINUS           reduce using rule 40 (expr -> ID .)
+    PLUS            reduce using rule 40 (expr -> ID .)
+    STRUCT          reduce using rule 40 (expr -> ID .)
+    FUNC            reduce using rule 40 (expr -> ID .)
+    ID              reduce using rule 40 (expr -> ID .)
+    IF              reduce using rule 40 (expr -> ID .)
+    $end            reduce using rule 40 (expr -> ID .)
+    RBRACE          reduce using rule 40 (expr -> ID .)
+    RPAREN          reduce using rule 40 (expr -> ID .)
+
+
+state 31
+
+    (39) expr -> LPAREN . expr RPAREN
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 63
+
+state 32
+
+    (41) expr -> NUMBER .
+    LBRACE          reduce using rule 41 (expr -> NUMBER .)
+    NOT             reduce using rule 41 (expr -> NUMBER .)
+    OR              reduce using rule 41 (expr -> NUMBER .)
+    AND             reduce using rule 41 (expr -> NUMBER .)
+    NE              reduce using rule 41 (expr -> NUMBER .)
+    GT              reduce using rule 41 (expr -> NUMBER .)
+    GE              reduce using rule 41 (expr -> NUMBER .)
+    LT              reduce using rule 41 (expr -> NUMBER .)
+    LE              reduce using rule 41 (expr -> NUMBER .)
+    EQ              reduce using rule 41 (expr -> NUMBER .)
+    POWER           reduce using rule 41 (expr -> NUMBER .)
+    DIVIDE          reduce using rule 41 (expr -> NUMBER .)
+    TIMES           reduce using rule 41 (expr -> NUMBER .)
+    MINUS           reduce using rule 41 (expr -> NUMBER .)
+    PLUS            reduce using rule 41 (expr -> NUMBER .)
+    STRUCT          reduce using rule 41 (expr -> NUMBER .)
+    FUNC            reduce using rule 41 (expr -> NUMBER .)
+    ID              reduce using rule 41 (expr -> NUMBER .)
+    IF              reduce using rule 41 (expr -> NUMBER .)
+    $end            reduce using rule 41 (expr -> NUMBER .)
+    RBRACE          reduce using rule 41 (expr -> NUMBER .)
+    RPAREN          reduce using rule 41 (expr -> NUMBER .)
+
+
+state 33
+
+    (42) expr -> STRING .
+    LBRACE          reduce using rule 42 (expr -> STRING .)
+    NOT             reduce using rule 42 (expr -> STRING .)
+    OR              reduce using rule 42 (expr -> STRING .)
+    AND             reduce using rule 42 (expr -> STRING .)
+    NE              reduce using rule 42 (expr -> STRING .)
+    GT              reduce using rule 42 (expr -> STRING .)
+    GE              reduce using rule 42 (expr -> STRING .)
+    LT              reduce using rule 42 (expr -> STRING .)
+    LE              reduce using rule 42 (expr -> STRING .)
+    EQ              reduce using rule 42 (expr -> STRING .)
+    POWER           reduce using rule 42 (expr -> STRING .)
+    DIVIDE          reduce using rule 42 (expr -> STRING .)
+    TIMES           reduce using rule 42 (expr -> STRING .)
+    MINUS           reduce using rule 42 (expr -> STRING .)
+    PLUS            reduce using rule 42 (expr -> STRING .)
+    STRUCT          reduce using rule 42 (expr -> STRING .)
+    FUNC            reduce using rule 42 (expr -> STRING .)
+    ID              reduce using rule 42 (expr -> STRING .)
+    IF              reduce using rule 42 (expr -> STRING .)
+    $end            reduce using rule 42 (expr -> STRING .)
+    RBRACE          reduce using rule 42 (expr -> STRING .)
+    RPAREN          reduce using rule 42 (expr -> STRING .)
+
+
+state 34
+
+    (21) cond -> cond_if _4_repeat _5_optional .
+    STRUCT          reduce using rule 21 (cond -> cond_if _4_repeat _5_optional .)
+    FUNC            reduce using rule 21 (cond -> cond_if _4_repeat _5_optional .)
+    ID              reduce using rule 21 (cond -> cond_if _4_repeat _5_optional .)
+    IF              reduce using rule 21 (cond -> cond_if _4_repeat _5_optional .)
+    $end            reduce using rule 21 (cond -> cond_if _4_repeat _5_optional .)
+    RBRACE          reduce using rule 21 (cond -> cond_if _4_repeat _5_optional .)
+
+
+state 35
+
+    (27) _5_optional -> cond_else .
+    STRUCT          reduce using rule 27 (_5_optional -> cond_else .)
+    FUNC            reduce using rule 27 (_5_optional -> cond_else .)
+    ID              reduce using rule 27 (_5_optional -> cond_else .)
+    IF              reduce using rule 27 (_5_optional -> cond_else .)
+    $end            reduce using rule 27 (_5_optional -> cond_else .)
+    RBRACE          reduce using rule 27 (_5_optional -> cond_else .)
+
+
+state 36
+
+    (31) cond_else -> ELSE . LBRACE body RBRACE
+    LBRACE          shift and go to state 64
+
+
+state 37
+
+    (24) _4_items -> _4_items _4_item .
+    ELSE            reduce using rule 24 (_4_items -> _4_items _4_item .)
+    STRUCT          reduce using rule 24 (_4_items -> _4_items _4_item .)
+    FUNC            reduce using rule 24 (_4_items -> _4_items _4_item .)
+    ID              reduce using rule 24 (_4_items -> _4_items _4_item .)
+    IF              reduce using rule 24 (_4_items -> _4_items _4_item .)
+    $end            reduce using rule 24 (_4_items -> _4_items _4_item .)
+    RBRACE          reduce using rule 24 (_4_items -> _4_items _4_item .)
+
+
+state 38
+
+    (30) cond_elseif -> ELSE cond_if .
+    ELSE            reduce using rule 30 (cond_elseif -> ELSE cond_if .)
+    STRUCT          reduce using rule 30 (cond_elseif -> ELSE cond_if .)
+    FUNC            reduce using rule 30 (cond_elseif -> ELSE cond_if .)
+    ID              reduce using rule 30 (cond_elseif -> ELSE cond_if .)
+    IF              reduce using rule 30 (cond_elseif -> ELSE cond_if .)
+    $end            reduce using rule 30 (cond_elseif -> ELSE cond_if .)
+    RBRACE          reduce using rule 30 (cond_elseif -> ELSE cond_if .)
+
+
+state 39
+
+    (14) struct -> STRUCT ID LBRACE . args RBRACE
+    (15) args -> . ID _3_repeat
+    ID              shift and go to state 65
+
+    args                           shift and go to state 66
+
+state 40
+
+    (32) statement -> ID POWER ASSIGN . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 67
+
+state 41
+
+    (37) statement -> ID ASSIGN expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    STRUCT          reduce using rule 37 (statement -> ID ASSIGN expr .)
+    FUNC            reduce using rule 37 (statement -> ID ASSIGN expr .)
+    ID              reduce using rule 37 (statement -> ID ASSIGN expr .)
+    IF              reduce using rule 37 (statement -> ID ASSIGN expr .)
+    $end            reduce using rule 37 (statement -> ID ASSIGN expr .)
+    RBRACE          reduce using rule 37 (statement -> ID ASSIGN expr .)
+    NOT             shift and go to state 48
+    OR              shift and go to state 49
+    AND             shift and go to state 50
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 42
+
+    (33) statement -> ID DIVIDE ASSIGN . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 68
+
+state 43
+
+    (34) statement -> ID TIMES ASSIGN . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 69
+
+state 44
+
+    (35) statement -> ID MINUS ASSIGN . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 70
+
+state 45
+
+    (36) statement -> ID PLUS ASSIGN . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 71
+
+state 46
+
+    (11) func -> FUNC ID LPAREN . _2_optional RPAREN LBRACE body RBRACE
+    (12) _2_optional -> . args
+    (13) _2_optional -> .
+    (15) args -> . ID _3_repeat
+    RPAREN          reduce using rule 13 (_2_optional -> .)
+    ID              shift and go to state 65
+
+    _2_optional                    shift and go to state 72
+    args                           shift and go to state 73
+
+state 47
+
+    (29) cond_if -> IF expr LBRACE . body RBRACE
+    (1) body -> . _1_repeat
+    (2) _1_repeat -> . _1_items
+    (3) _1_repeat -> .
+    (4) _1_items -> . _1_items _1_item
+    (5) _1_items -> . _1_item
+    (6) _1_item -> . declaration
+    (7) declaration -> . cond
+    (8) declaration -> . struct
+    (9) declaration -> . func
+    (10) declaration -> . statement
+    (21) cond -> . cond_if _4_repeat _5_optional
+    (14) struct -> . STRUCT ID LBRACE args RBRACE
+    (11) func -> . FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE
+    (32) statement -> . ID POWER ASSIGN expr
+    (33) statement -> . ID DIVIDE ASSIGN expr
+    (34) statement -> . ID TIMES ASSIGN expr
+    (35) statement -> . ID MINUS ASSIGN expr
+    (36) statement -> . ID PLUS ASSIGN expr
+    (37) statement -> . ID ASSIGN expr
+    (29) cond_if -> . IF expr LBRACE body RBRACE
+    RBRACE          reduce using rule 3 (_1_repeat -> .)
+    STRUCT          shift and go to state 11
+    FUNC            shift and go to state 13
+    ID              shift and go to state 12
+    IF              shift and go to state 14
+
+    body                           shift and go to state 74
+    _1_repeat                      shift and go to state 2
+    _1_items                       shift and go to state 3
+    _1_item                        shift and go to state 4
+    declaration                    shift and go to state 5
+    cond                           shift and go to state 6
+    struct                         shift and go to state 7
+    func                           shift and go to state 8
+    statement                      shift and go to state 9
+    cond_if                        shift and go to state 10
+
+state 48
+
+    (43) expr -> expr NOT . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 75
+
+state 49
+
+    (44) expr -> expr OR . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 76
+
+state 50
+
+    (45) expr -> expr AND . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 77
+
+state 51
+
+    (46) expr -> expr NE . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 78
+
+state 52
+
+    (47) expr -> expr GT . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 79
+
+state 53
+
+    (48) expr -> expr GE . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 80
+
+state 54
+
+    (49) expr -> expr LT . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 81
+
+state 55
+
+    (50) expr -> expr LE . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 82
+
+state 56
+
+    (51) expr -> expr EQ . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 83
+
+state 57
+
+    (52) expr -> expr POWER . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 84
+
+state 58
+
+    (53) expr -> expr DIVIDE . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 85
+
+state 59
+
+    (54) expr -> expr TIMES . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 86
+
+state 60
+
+    (55) expr -> expr MINUS . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 87
+
+state 61
+
+    (56) expr -> expr PLUS . expr
+    (38) expr -> . ID LPAREN RPAREN
+    (39) expr -> . LPAREN expr RPAREN
+    (40) expr -> . ID
+    (41) expr -> . NUMBER
+    (42) expr -> . STRING
+    (43) expr -> . expr NOT expr
+    (44) expr -> . expr OR expr
+    (45) expr -> . expr AND expr
+    (46) expr -> . expr NE expr
+    (47) expr -> . expr GT expr
+    (48) expr -> . expr GE expr
+    (49) expr -> . expr LT expr
+    (50) expr -> . expr LE expr
+    (51) expr -> . expr EQ expr
+    (52) expr -> . expr POWER expr
+    (53) expr -> . expr DIVIDE expr
+    (54) expr -> . expr TIMES expr
+    (55) expr -> . expr MINUS expr
+    (56) expr -> . expr PLUS expr
+    ID              shift and go to state 30
+    LPAREN          shift and go to state 31
+    NUMBER          shift and go to state 32
+    STRING          shift and go to state 33
+
+    expr                           shift and go to state 88
+
+state 62
+
+    (38) expr -> ID LPAREN . RPAREN
+    RPAREN          shift and go to state 89
+
+
+state 63
+
+    (39) expr -> LPAREN expr . RPAREN
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    RPAREN          shift and go to state 90
+    NOT             shift and go to state 48
+    OR              shift and go to state 49
+    AND             shift and go to state 50
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 64
+
+    (31) cond_else -> ELSE LBRACE . body RBRACE
+    (1) body -> . _1_repeat
+    (2) _1_repeat -> . _1_items
+    (3) _1_repeat -> .
+    (4) _1_items -> . _1_items _1_item
+    (5) _1_items -> . _1_item
+    (6) _1_item -> . declaration
+    (7) declaration -> . cond
+    (8) declaration -> . struct
+    (9) declaration -> . func
+    (10) declaration -> . statement
+    (21) cond -> . cond_if _4_repeat _5_optional
+    (14) struct -> . STRUCT ID LBRACE args RBRACE
+    (11) func -> . FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE
+    (32) statement -> . ID POWER ASSIGN expr
+    (33) statement -> . ID DIVIDE ASSIGN expr
+    (34) statement -> . ID TIMES ASSIGN expr
+    (35) statement -> . ID MINUS ASSIGN expr
+    (36) statement -> . ID PLUS ASSIGN expr
+    (37) statement -> . ID ASSIGN expr
+    (29) cond_if -> . IF expr LBRACE body RBRACE
+    RBRACE          reduce using rule 3 (_1_repeat -> .)
+    STRUCT          shift and go to state 11
+    FUNC            shift and go to state 13
+    ID              shift and go to state 12
+    IF              shift and go to state 14
+
+    body                           shift and go to state 91
+    _1_repeat                      shift and go to state 2
+    _1_items                       shift and go to state 3
+    _1_item                        shift and go to state 4
+    declaration                    shift and go to state 5
+    cond                           shift and go to state 6
+    struct                         shift and go to state 7
+    func                           shift and go to state 8
+    statement                      shift and go to state 9
+    cond_if                        shift and go to state 10
+
+state 65
+
+    (15) args -> ID . _3_repeat
+    (16) _3_repeat -> . _3_items
+    (17) _3_repeat -> .
+    (18) _3_items -> . _3_items _3_item
+    (19) _3_items -> . _3_item
+    (20) _3_item -> . COMMA ID
+    RBRACE          reduce using rule 17 (_3_repeat -> .)
+    RPAREN          reduce using rule 17 (_3_repeat -> .)
+    COMMA           shift and go to state 95
+
+    _3_repeat                      shift and go to state 92
+    _3_items                       shift and go to state 93
+    _3_item                        shift and go to state 94
+
+state 66
+
+    (14) struct -> STRUCT ID LBRACE args . RBRACE
+    RBRACE          shift and go to state 96
+
+
+state 67
+
+    (32) statement -> ID POWER ASSIGN expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    STRUCT          reduce using rule 32 (statement -> ID POWER ASSIGN expr .)
+    FUNC            reduce using rule 32 (statement -> ID POWER ASSIGN expr .)
+    ID              reduce using rule 32 (statement -> ID POWER ASSIGN expr .)
+    IF              reduce using rule 32 (statement -> ID POWER ASSIGN expr .)
+    $end            reduce using rule 32 (statement -> ID POWER ASSIGN expr .)
+    RBRACE          reduce using rule 32 (statement -> ID POWER ASSIGN expr .)
+    NOT             shift and go to state 48
+    OR              shift and go to state 49
+    AND             shift and go to state 50
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 68
+
+    (33) statement -> ID DIVIDE ASSIGN expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    STRUCT          reduce using rule 33 (statement -> ID DIVIDE ASSIGN expr .)
+    FUNC            reduce using rule 33 (statement -> ID DIVIDE ASSIGN expr .)
+    ID              reduce using rule 33 (statement -> ID DIVIDE ASSIGN expr .)
+    IF              reduce using rule 33 (statement -> ID DIVIDE ASSIGN expr .)
+    $end            reduce using rule 33 (statement -> ID DIVIDE ASSIGN expr .)
+    RBRACE          reduce using rule 33 (statement -> ID DIVIDE ASSIGN expr .)
+    NOT             shift and go to state 48
+    OR              shift and go to state 49
+    AND             shift and go to state 50
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 69
+
+    (34) statement -> ID TIMES ASSIGN expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    STRUCT          reduce using rule 34 (statement -> ID TIMES ASSIGN expr .)
+    FUNC            reduce using rule 34 (statement -> ID TIMES ASSIGN expr .)
+    ID              reduce using rule 34 (statement -> ID TIMES ASSIGN expr .)
+    IF              reduce using rule 34 (statement -> ID TIMES ASSIGN expr .)
+    $end            reduce using rule 34 (statement -> ID TIMES ASSIGN expr .)
+    RBRACE          reduce using rule 34 (statement -> ID TIMES ASSIGN expr .)
+    NOT             shift and go to state 48
+    OR              shift and go to state 49
+    AND             shift and go to state 50
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 70
+
+    (35) statement -> ID MINUS ASSIGN expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    STRUCT          reduce using rule 35 (statement -> ID MINUS ASSIGN expr .)
+    FUNC            reduce using rule 35 (statement -> ID MINUS ASSIGN expr .)
+    ID              reduce using rule 35 (statement -> ID MINUS ASSIGN expr .)
+    IF              reduce using rule 35 (statement -> ID MINUS ASSIGN expr .)
+    $end            reduce using rule 35 (statement -> ID MINUS ASSIGN expr .)
+    RBRACE          reduce using rule 35 (statement -> ID MINUS ASSIGN expr .)
+    NOT             shift and go to state 48
+    OR              shift and go to state 49
+    AND             shift and go to state 50
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 71
+
+    (36) statement -> ID PLUS ASSIGN expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    STRUCT          reduce using rule 36 (statement -> ID PLUS ASSIGN expr .)
+    FUNC            reduce using rule 36 (statement -> ID PLUS ASSIGN expr .)
+    ID              reduce using rule 36 (statement -> ID PLUS ASSIGN expr .)
+    IF              reduce using rule 36 (statement -> ID PLUS ASSIGN expr .)
+    $end            reduce using rule 36 (statement -> ID PLUS ASSIGN expr .)
+    RBRACE          reduce using rule 36 (statement -> ID PLUS ASSIGN expr .)
+    NOT             shift and go to state 48
+    OR              shift and go to state 49
+    AND             shift and go to state 50
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 72
+
+    (11) func -> FUNC ID LPAREN _2_optional . RPAREN LBRACE body RBRACE
+    RPAREN          shift and go to state 97
+
+
+state 73
+
+    (12) _2_optional -> args .
+    RPAREN          reduce using rule 12 (_2_optional -> args .)
+
+
+state 74
+
+    (29) cond_if -> IF expr LBRACE body . RBRACE
+    RBRACE          shift and go to state 98
+
+
+state 75
+
+    (43) expr -> expr NOT expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 43 (expr -> expr NOT expr .)
+    NOT             reduce using rule 43 (expr -> expr NOT expr .)
+    OR              reduce using rule 43 (expr -> expr NOT expr .)
+    AND             reduce using rule 43 (expr -> expr NOT expr .)
+    STRUCT          reduce using rule 43 (expr -> expr NOT expr .)
+    FUNC            reduce using rule 43 (expr -> expr NOT expr .)
+    ID              reduce using rule 43 (expr -> expr NOT expr .)
+    IF              reduce using rule 43 (expr -> expr NOT expr .)
+    $end            reduce using rule 43 (expr -> expr NOT expr .)
+    RBRACE          reduce using rule 43 (expr -> expr NOT expr .)
+    RPAREN          reduce using rule 43 (expr -> expr NOT expr .)
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 76
+
+    (44) expr -> expr OR expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 44 (expr -> expr OR expr .)
+    OR              reduce using rule 44 (expr -> expr OR expr .)
+    STRUCT          reduce using rule 44 (expr -> expr OR expr .)
+    FUNC            reduce using rule 44 (expr -> expr OR expr .)
+    ID              reduce using rule 44 (expr -> expr OR expr .)
+    IF              reduce using rule 44 (expr -> expr OR expr .)
+    $end            reduce using rule 44 (expr -> expr OR expr .)
+    RBRACE          reduce using rule 44 (expr -> expr OR expr .)
+    RPAREN          reduce using rule 44 (expr -> expr OR expr .)
+    NOT             shift and go to state 48
+    AND             shift and go to state 50
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 77
+
+    (45) expr -> expr AND expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 45 (expr -> expr AND expr .)
+    OR              reduce using rule 45 (expr -> expr AND expr .)
+    AND             reduce using rule 45 (expr -> expr AND expr .)
+    STRUCT          reduce using rule 45 (expr -> expr AND expr .)
+    FUNC            reduce using rule 45 (expr -> expr AND expr .)
+    ID              reduce using rule 45 (expr -> expr AND expr .)
+    IF              reduce using rule 45 (expr -> expr AND expr .)
+    $end            reduce using rule 45 (expr -> expr AND expr .)
+    RBRACE          reduce using rule 45 (expr -> expr AND expr .)
+    RPAREN          reduce using rule 45 (expr -> expr AND expr .)
+    NOT             shift and go to state 48
+    NE              shift and go to state 51
+    GT              shift and go to state 52
+    GE              shift and go to state 53
+    LT              shift and go to state 54
+    LE              shift and go to state 55
+    EQ              shift and go to state 56
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 78
+
+    (46) expr -> expr NE expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 46 (expr -> expr NE expr .)
+    NOT             reduce using rule 46 (expr -> expr NE expr .)
+    OR              reduce using rule 46 (expr -> expr NE expr .)
+    AND             reduce using rule 46 (expr -> expr NE expr .)
+    NE              reduce using rule 46 (expr -> expr NE expr .)
+    GT              reduce using rule 46 (expr -> expr NE expr .)
+    GE              reduce using rule 46 (expr -> expr NE expr .)
+    LT              reduce using rule 46 (expr -> expr NE expr .)
+    LE              reduce using rule 46 (expr -> expr NE expr .)
+    EQ              reduce using rule 46 (expr -> expr NE expr .)
+    STRUCT          reduce using rule 46 (expr -> expr NE expr .)
+    FUNC            reduce using rule 46 (expr -> expr NE expr .)
+    ID              reduce using rule 46 (expr -> expr NE expr .)
+    IF              reduce using rule 46 (expr -> expr NE expr .)
+    $end            reduce using rule 46 (expr -> expr NE expr .)
+    RBRACE          reduce using rule 46 (expr -> expr NE expr .)
+    RPAREN          reduce using rule 46 (expr -> expr NE expr .)
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 79
+
+    (47) expr -> expr GT expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 47 (expr -> expr GT expr .)
+    NOT             reduce using rule 47 (expr -> expr GT expr .)
+    OR              reduce using rule 47 (expr -> expr GT expr .)
+    AND             reduce using rule 47 (expr -> expr GT expr .)
+    NE              reduce using rule 47 (expr -> expr GT expr .)
+    GT              reduce using rule 47 (expr -> expr GT expr .)
+    GE              reduce using rule 47 (expr -> expr GT expr .)
+    LT              reduce using rule 47 (expr -> expr GT expr .)
+    LE              reduce using rule 47 (expr -> expr GT expr .)
+    EQ              reduce using rule 47 (expr -> expr GT expr .)
+    STRUCT          reduce using rule 47 (expr -> expr GT expr .)
+    FUNC            reduce using rule 47 (expr -> expr GT expr .)
+    ID              reduce using rule 47 (expr -> expr GT expr .)
+    IF              reduce using rule 47 (expr -> expr GT expr .)
+    $end            reduce using rule 47 (expr -> expr GT expr .)
+    RBRACE          reduce using rule 47 (expr -> expr GT expr .)
+    RPAREN          reduce using rule 47 (expr -> expr GT expr .)
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 80
+
+    (48) expr -> expr GE expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 48 (expr -> expr GE expr .)
+    NOT             reduce using rule 48 (expr -> expr GE expr .)
+    OR              reduce using rule 48 (expr -> expr GE expr .)
+    AND             reduce using rule 48 (expr -> expr GE expr .)
+    NE              reduce using rule 48 (expr -> expr GE expr .)
+    GT              reduce using rule 48 (expr -> expr GE expr .)
+    GE              reduce using rule 48 (expr -> expr GE expr .)
+    LT              reduce using rule 48 (expr -> expr GE expr .)
+    LE              reduce using rule 48 (expr -> expr GE expr .)
+    EQ              reduce using rule 48 (expr -> expr GE expr .)
+    STRUCT          reduce using rule 48 (expr -> expr GE expr .)
+    FUNC            reduce using rule 48 (expr -> expr GE expr .)
+    ID              reduce using rule 48 (expr -> expr GE expr .)
+    IF              reduce using rule 48 (expr -> expr GE expr .)
+    $end            reduce using rule 48 (expr -> expr GE expr .)
+    RBRACE          reduce using rule 48 (expr -> expr GE expr .)
+    RPAREN          reduce using rule 48 (expr -> expr GE expr .)
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 81
+
+    (49) expr -> expr LT expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 49 (expr -> expr LT expr .)
+    NOT             reduce using rule 49 (expr -> expr LT expr .)
+    OR              reduce using rule 49 (expr -> expr LT expr .)
+    AND             reduce using rule 49 (expr -> expr LT expr .)
+    NE              reduce using rule 49 (expr -> expr LT expr .)
+    GT              reduce using rule 49 (expr -> expr LT expr .)
+    GE              reduce using rule 49 (expr -> expr LT expr .)
+    LT              reduce using rule 49 (expr -> expr LT expr .)
+    LE              reduce using rule 49 (expr -> expr LT expr .)
+    EQ              reduce using rule 49 (expr -> expr LT expr .)
+    STRUCT          reduce using rule 49 (expr -> expr LT expr .)
+    FUNC            reduce using rule 49 (expr -> expr LT expr .)
+    ID              reduce using rule 49 (expr -> expr LT expr .)
+    IF              reduce using rule 49 (expr -> expr LT expr .)
+    $end            reduce using rule 49 (expr -> expr LT expr .)
+    RBRACE          reduce using rule 49 (expr -> expr LT expr .)
+    RPAREN          reduce using rule 49 (expr -> expr LT expr .)
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 82
+
+    (50) expr -> expr LE expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 50 (expr -> expr LE expr .)
+    NOT             reduce using rule 50 (expr -> expr LE expr .)
+    OR              reduce using rule 50 (expr -> expr LE expr .)
+    AND             reduce using rule 50 (expr -> expr LE expr .)
+    NE              reduce using rule 50 (expr -> expr LE expr .)
+    GT              reduce using rule 50 (expr -> expr LE expr .)
+    GE              reduce using rule 50 (expr -> expr LE expr .)
+    LT              reduce using rule 50 (expr -> expr LE expr .)
+    LE              reduce using rule 50 (expr -> expr LE expr .)
+    EQ              reduce using rule 50 (expr -> expr LE expr .)
+    STRUCT          reduce using rule 50 (expr -> expr LE expr .)
+    FUNC            reduce using rule 50 (expr -> expr LE expr .)
+    ID              reduce using rule 50 (expr -> expr LE expr .)
+    IF              reduce using rule 50 (expr -> expr LE expr .)
+    $end            reduce using rule 50 (expr -> expr LE expr .)
+    RBRACE          reduce using rule 50 (expr -> expr LE expr .)
+    RPAREN          reduce using rule 50 (expr -> expr LE expr .)
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 83
+
+    (51) expr -> expr EQ expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 51 (expr -> expr EQ expr .)
+    NOT             reduce using rule 51 (expr -> expr EQ expr .)
+    OR              reduce using rule 51 (expr -> expr EQ expr .)
+    AND             reduce using rule 51 (expr -> expr EQ expr .)
+    NE              reduce using rule 51 (expr -> expr EQ expr .)
+    GT              reduce using rule 51 (expr -> expr EQ expr .)
+    GE              reduce using rule 51 (expr -> expr EQ expr .)
+    LT              reduce using rule 51 (expr -> expr EQ expr .)
+    LE              reduce using rule 51 (expr -> expr EQ expr .)
+    EQ              reduce using rule 51 (expr -> expr EQ expr .)
+    STRUCT          reduce using rule 51 (expr -> expr EQ expr .)
+    FUNC            reduce using rule 51 (expr -> expr EQ expr .)
+    ID              reduce using rule 51 (expr -> expr EQ expr .)
+    IF              reduce using rule 51 (expr -> expr EQ expr .)
+    $end            reduce using rule 51 (expr -> expr EQ expr .)
+    RBRACE          reduce using rule 51 (expr -> expr EQ expr .)
+    RPAREN          reduce using rule 51 (expr -> expr EQ expr .)
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+    MINUS           shift and go to state 60
+    PLUS            shift and go to state 61
+
+
+state 84
+
+    (52) expr -> expr POWER expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 52 (expr -> expr POWER expr .)
+    NOT             reduce using rule 52 (expr -> expr POWER expr .)
+    OR              reduce using rule 52 (expr -> expr POWER expr .)
+    AND             reduce using rule 52 (expr -> expr POWER expr .)
+    NE              reduce using rule 52 (expr -> expr POWER expr .)
+    GT              reduce using rule 52 (expr -> expr POWER expr .)
+    GE              reduce using rule 52 (expr -> expr POWER expr .)
+    LT              reduce using rule 52 (expr -> expr POWER expr .)
+    LE              reduce using rule 52 (expr -> expr POWER expr .)
+    EQ              reduce using rule 52 (expr -> expr POWER expr .)
+    POWER           reduce using rule 52 (expr -> expr POWER expr .)
+    DIVIDE          reduce using rule 52 (expr -> expr POWER expr .)
+    TIMES           reduce using rule 52 (expr -> expr POWER expr .)
+    MINUS           reduce using rule 52 (expr -> expr POWER expr .)
+    PLUS            reduce using rule 52 (expr -> expr POWER expr .)
+    STRUCT          reduce using rule 52 (expr -> expr POWER expr .)
+    FUNC            reduce using rule 52 (expr -> expr POWER expr .)
+    ID              reduce using rule 52 (expr -> expr POWER expr .)
+    IF              reduce using rule 52 (expr -> expr POWER expr .)
+    $end            reduce using rule 52 (expr -> expr POWER expr .)
+    RBRACE          reduce using rule 52 (expr -> expr POWER expr .)
+    RPAREN          reduce using rule 52 (expr -> expr POWER expr .)
+
+
+state 85
+
+    (53) expr -> expr DIVIDE expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 53 (expr -> expr DIVIDE expr .)
+    NOT             reduce using rule 53 (expr -> expr DIVIDE expr .)
+    OR              reduce using rule 53 (expr -> expr DIVIDE expr .)
+    AND             reduce using rule 53 (expr -> expr DIVIDE expr .)
+    NE              reduce using rule 53 (expr -> expr DIVIDE expr .)
+    GT              reduce using rule 53 (expr -> expr DIVIDE expr .)
+    GE              reduce using rule 53 (expr -> expr DIVIDE expr .)
+    LT              reduce using rule 53 (expr -> expr DIVIDE expr .)
+    LE              reduce using rule 53 (expr -> expr DIVIDE expr .)
+    EQ              reduce using rule 53 (expr -> expr DIVIDE expr .)
+    DIVIDE          reduce using rule 53 (expr -> expr DIVIDE expr .)
+    TIMES           reduce using rule 53 (expr -> expr DIVIDE expr .)
+    MINUS           reduce using rule 53 (expr -> expr DIVIDE expr .)
+    PLUS            reduce using rule 53 (expr -> expr DIVIDE expr .)
+    STRUCT          reduce using rule 53 (expr -> expr DIVIDE expr .)
+    FUNC            reduce using rule 53 (expr -> expr DIVIDE expr .)
+    ID              reduce using rule 53 (expr -> expr DIVIDE expr .)
+    IF              reduce using rule 53 (expr -> expr DIVIDE expr .)
+    $end            reduce using rule 53 (expr -> expr DIVIDE expr .)
+    RBRACE          reduce using rule 53 (expr -> expr DIVIDE expr .)
+    RPAREN          reduce using rule 53 (expr -> expr DIVIDE expr .)
+    POWER           shift and go to state 57
+
+
+state 86
+
+    (54) expr -> expr TIMES expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 54 (expr -> expr TIMES expr .)
+    NOT             reduce using rule 54 (expr -> expr TIMES expr .)
+    OR              reduce using rule 54 (expr -> expr TIMES expr .)
+    AND             reduce using rule 54 (expr -> expr TIMES expr .)
+    NE              reduce using rule 54 (expr -> expr TIMES expr .)
+    GT              reduce using rule 54 (expr -> expr TIMES expr .)
+    GE              reduce using rule 54 (expr -> expr TIMES expr .)
+    LT              reduce using rule 54 (expr -> expr TIMES expr .)
+    LE              reduce using rule 54 (expr -> expr TIMES expr .)
+    EQ              reduce using rule 54 (expr -> expr TIMES expr .)
+    DIVIDE          reduce using rule 54 (expr -> expr TIMES expr .)
+    TIMES           reduce using rule 54 (expr -> expr TIMES expr .)
+    MINUS           reduce using rule 54 (expr -> expr TIMES expr .)
+    PLUS            reduce using rule 54 (expr -> expr TIMES expr .)
+    STRUCT          reduce using rule 54 (expr -> expr TIMES expr .)
+    FUNC            reduce using rule 54 (expr -> expr TIMES expr .)
+    ID              reduce using rule 54 (expr -> expr TIMES expr .)
+    IF              reduce using rule 54 (expr -> expr TIMES expr .)
+    $end            reduce using rule 54 (expr -> expr TIMES expr .)
+    RBRACE          reduce using rule 54 (expr -> expr TIMES expr .)
+    RPAREN          reduce using rule 54 (expr -> expr TIMES expr .)
+    POWER           shift and go to state 57
+
+
+state 87
+
+    (55) expr -> expr MINUS expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 55 (expr -> expr MINUS expr .)
+    NOT             reduce using rule 55 (expr -> expr MINUS expr .)
+    OR              reduce using rule 55 (expr -> expr MINUS expr .)
+    AND             reduce using rule 55 (expr -> expr MINUS expr .)
+    NE              reduce using rule 55 (expr -> expr MINUS expr .)
+    GT              reduce using rule 55 (expr -> expr MINUS expr .)
+    GE              reduce using rule 55 (expr -> expr MINUS expr .)
+    LT              reduce using rule 55 (expr -> expr MINUS expr .)
+    LE              reduce using rule 55 (expr -> expr MINUS expr .)
+    EQ              reduce using rule 55 (expr -> expr MINUS expr .)
+    MINUS           reduce using rule 55 (expr -> expr MINUS expr .)
+    PLUS            reduce using rule 55 (expr -> expr MINUS expr .)
+    STRUCT          reduce using rule 55 (expr -> expr MINUS expr .)
+    FUNC            reduce using rule 55 (expr -> expr MINUS expr .)
+    ID              reduce using rule 55 (expr -> expr MINUS expr .)
+    IF              reduce using rule 55 (expr -> expr MINUS expr .)
+    $end            reduce using rule 55 (expr -> expr MINUS expr .)
+    RBRACE          reduce using rule 55 (expr -> expr MINUS expr .)
+    RPAREN          reduce using rule 55 (expr -> expr MINUS expr .)
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+
+
+state 88
+
+    (56) expr -> expr PLUS expr .
+    (43) expr -> expr . NOT expr
+    (44) expr -> expr . OR expr
+    (45) expr -> expr . AND expr
+    (46) expr -> expr . NE expr
+    (47) expr -> expr . GT expr
+    (48) expr -> expr . GE expr
+    (49) expr -> expr . LT expr
+    (50) expr -> expr . LE expr
+    (51) expr -> expr . EQ expr
+    (52) expr -> expr . POWER expr
+    (53) expr -> expr . DIVIDE expr
+    (54) expr -> expr . TIMES expr
+    (55) expr -> expr . MINUS expr
+    (56) expr -> expr . PLUS expr
+    LBRACE          reduce using rule 56 (expr -> expr PLUS expr .)
+    NOT             reduce using rule 56 (expr -> expr PLUS expr .)
+    OR              reduce using rule 56 (expr -> expr PLUS expr .)
+    AND             reduce using rule 56 (expr -> expr PLUS expr .)
+    NE              reduce using rule 56 (expr -> expr PLUS expr .)
+    GT              reduce using rule 56 (expr -> expr PLUS expr .)
+    GE              reduce using rule 56 (expr -> expr PLUS expr .)
+    LT              reduce using rule 56 (expr -> expr PLUS expr .)
+    LE              reduce using rule 56 (expr -> expr PLUS expr .)
+    EQ              reduce using rule 56 (expr -> expr PLUS expr .)
+    MINUS           reduce using rule 56 (expr -> expr PLUS expr .)
+    PLUS            reduce using rule 56 (expr -> expr PLUS expr .)
+    STRUCT          reduce using rule 56 (expr -> expr PLUS expr .)
+    FUNC            reduce using rule 56 (expr -> expr PLUS expr .)
+    ID              reduce using rule 56 (expr -> expr PLUS expr .)
+    IF              reduce using rule 56 (expr -> expr PLUS expr .)
+    $end            reduce using rule 56 (expr -> expr PLUS expr .)
+    RBRACE          reduce using rule 56 (expr -> expr PLUS expr .)
+    RPAREN          reduce using rule 56 (expr -> expr PLUS expr .)
+    POWER           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    TIMES           shift and go to state 59
+
+
+state 89
+
+    (38) expr -> ID LPAREN RPAREN .
+    LBRACE          reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    NOT             reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    OR              reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    AND             reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    NE              reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    GT              reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    GE              reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    LT              reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    LE              reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    EQ              reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    POWER           reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    DIVIDE          reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    TIMES           reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    MINUS           reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    PLUS            reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    STRUCT          reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    FUNC            reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    ID              reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    IF              reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    $end            reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    RBRACE          reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+    RPAREN          reduce using rule 38 (expr -> ID LPAREN RPAREN .)
+
+
+state 90
+
+    (39) expr -> LPAREN expr RPAREN .
+    LBRACE          reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    NOT             reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    OR              reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    AND             reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    NE              reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    GT              reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    GE              reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    LT              reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    LE              reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    EQ              reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    POWER           reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    DIVIDE          reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    TIMES           reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    MINUS           reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    PLUS            reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    STRUCT          reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    FUNC            reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    ID              reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    IF              reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    $end            reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    RBRACE          reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+    RPAREN          reduce using rule 39 (expr -> LPAREN expr RPAREN .)
+
+
+state 91
+
+    (31) cond_else -> ELSE LBRACE body . RBRACE
+    RBRACE          shift and go to state 99
+
+
+state 92
+
+    (15) args -> ID _3_repeat .
+    RBRACE          reduce using rule 15 (args -> ID _3_repeat .)
+    RPAREN          reduce using rule 15 (args -> ID _3_repeat .)
+
+
+state 93
+
+    (16) _3_repeat -> _3_items .
+    (18) _3_items -> _3_items . _3_item
+    (20) _3_item -> . COMMA ID
+    RBRACE          reduce using rule 16 (_3_repeat -> _3_items .)
+    RPAREN          reduce using rule 16 (_3_repeat -> _3_items .)
+    COMMA           shift and go to state 95
+
+    _3_item                        shift and go to state 100
+
+state 94
+
+    (19) _3_items -> _3_item .
+    COMMA           reduce using rule 19 (_3_items -> _3_item .)
+    RBRACE          reduce using rule 19 (_3_items -> _3_item .)
+    RPAREN          reduce using rule 19 (_3_items -> _3_item .)
+
+
+state 95
+
+    (20) _3_item -> COMMA . ID
+    ID              shift and go to state 101
+
+
+state 96
+
+    (14) struct -> STRUCT ID LBRACE args RBRACE .
+    STRUCT          reduce using rule 14 (struct -> STRUCT ID LBRACE args RBRACE .)
+    FUNC            reduce using rule 14 (struct -> STRUCT ID LBRACE args RBRACE .)
+    ID              reduce using rule 14 (struct -> STRUCT ID LBRACE args RBRACE .)
+    IF              reduce using rule 14 (struct -> STRUCT ID LBRACE args RBRACE .)
+    $end            reduce using rule 14 (struct -> STRUCT ID LBRACE args RBRACE .)
+    RBRACE          reduce using rule 14 (struct -> STRUCT ID LBRACE args RBRACE .)
+
+
+state 97
+
+    (11) func -> FUNC ID LPAREN _2_optional RPAREN . LBRACE body RBRACE
+    LBRACE          shift and go to state 102
+
+
+state 98
+
+    (29) cond_if -> IF expr LBRACE body RBRACE .
+    ELSE            reduce using rule 29 (cond_if -> IF expr LBRACE body RBRACE .)
+    STRUCT          reduce using rule 29 (cond_if -> IF expr LBRACE body RBRACE .)
+    FUNC            reduce using rule 29 (cond_if -> IF expr LBRACE body RBRACE .)
+    ID              reduce using rule 29 (cond_if -> IF expr LBRACE body RBRACE .)
+    IF              reduce using rule 29 (cond_if -> IF expr LBRACE body RBRACE .)
+    $end            reduce using rule 29 (cond_if -> IF expr LBRACE body RBRACE .)
+    RBRACE          reduce using rule 29 (cond_if -> IF expr LBRACE body RBRACE .)
+
+
+state 99
+
+    (31) cond_else -> ELSE LBRACE body RBRACE .
+    STRUCT          reduce using rule 31 (cond_else -> ELSE LBRACE body RBRACE .)
+    FUNC            reduce using rule 31 (cond_else -> ELSE LBRACE body RBRACE .)
+    ID              reduce using rule 31 (cond_else -> ELSE LBRACE body RBRACE .)
+    IF              reduce using rule 31 (cond_else -> ELSE LBRACE body RBRACE .)
+    $end            reduce using rule 31 (cond_else -> ELSE LBRACE body RBRACE .)
+    RBRACE          reduce using rule 31 (cond_else -> ELSE LBRACE body RBRACE .)
+
+
+state 100
+
+    (18) _3_items -> _3_items _3_item .
+    COMMA           reduce using rule 18 (_3_items -> _3_items _3_item .)
+    RBRACE          reduce using rule 18 (_3_items -> _3_items _3_item .)
+    RPAREN          reduce using rule 18 (_3_items -> _3_items _3_item .)
+
+
+state 101
+
+    (20) _3_item -> COMMA ID .
+    COMMA           reduce using rule 20 (_3_item -> COMMA ID .)
+    RBRACE          reduce using rule 20 (_3_item -> COMMA ID .)
+    RPAREN          reduce using rule 20 (_3_item -> COMMA ID .)
+
+
+state 102
+
+    (11) func -> FUNC ID LPAREN _2_optional RPAREN LBRACE . body RBRACE
+    (1) body -> . _1_repeat
+    (2) _1_repeat -> . _1_items
+    (3) _1_repeat -> .
+    (4) _1_items -> . _1_items _1_item
+    (5) _1_items -> . _1_item
+    (6) _1_item -> . declaration
+    (7) declaration -> . cond
+    (8) declaration -> . struct
+    (9) declaration -> . func
+    (10) declaration -> . statement
+    (21) cond -> . cond_if _4_repeat _5_optional
+    (14) struct -> . STRUCT ID LBRACE args RBRACE
+    (11) func -> . FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE
+    (32) statement -> . ID POWER ASSIGN expr
+    (33) statement -> . ID DIVIDE ASSIGN expr
+    (34) statement -> . ID TIMES ASSIGN expr
+    (35) statement -> . ID MINUS ASSIGN expr
+    (36) statement -> . ID PLUS ASSIGN expr
+    (37) statement -> . ID ASSIGN expr
+    (29) cond_if -> . IF expr LBRACE body RBRACE
+    RBRACE          reduce using rule 3 (_1_repeat -> .)
+    STRUCT          shift and go to state 11
+    FUNC            shift and go to state 13
+    ID              shift and go to state 12
+    IF              shift and go to state 14
+
+    body                           shift and go to state 103
+    _1_repeat                      shift and go to state 2
+    _1_items                       shift and go to state 3
+    _1_item                        shift and go to state 4
+    declaration                    shift and go to state 5
+    cond                           shift and go to state 6
+    struct                         shift and go to state 7
+    func                           shift and go to state 8
+    statement                      shift and go to state 9
+    cond_if                        shift and go to state 10
+
+state 103
+
+    (11) func -> FUNC ID LPAREN _2_optional RPAREN LBRACE body . RBRACE
+    RBRACE          shift and go to state 104
+
+
+state 104
+
+    (11) func -> FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE .
+    STRUCT          reduce using rule 11 (func -> FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE .)
+    FUNC            reduce using rule 11 (func -> FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE .)
+    ID              reduce using rule 11 (func -> FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE .)
+    IF              reduce using rule 11 (func -> FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE .)
+    $end            reduce using rule 11 (func -> FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE .)
+    RBRACE          reduce using rule 11 (func -> FUNC ID LPAREN _2_optional RPAREN LBRACE body RBRACE .)
+
+
+Conflicts:
+
+shift/reduce conflict for ELSE in state 10 resolved as shift
+shift/reduce conflict for ELSE in state 17 resolved as shift
