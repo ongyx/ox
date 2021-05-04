@@ -3,12 +3,23 @@
 # flake8: noqa
 """ox's core syntax lexer and parser."""
 
-from __future__ import annotations
-
-from dataclasses import dataclass
-from typing import Any, Literal, Optional, Union
-
 import sly
+
+from . import ast_ as ast
+
+
+SINGLETONS = {"true": True, "false": False, "nil": None}
+
+# Pragmas change the behaviour of both the interpreter and parser.
+# Kind of like Python's 'from __future__ import ...'.
+# Pragmas have the form 'pragma <name>' where name is the pragma to use.
+# Multiple pragmas may be declared (for now).
+PRAGMAS = {
+    # Allows 'returns' in a function declaration (idk why Cub needed that):
+    # func myFunc() returns {
+    # TODO: Alias global functions used in Cub
+    "cub",
+}
 
 
 class Lexer(sly.Lexer):
@@ -33,6 +44,7 @@ class Lexer(sly.Lexer):
         CONTINUE,
         FUNC,
         STRUCT,
+        PRAGMA,
         PLUS,
         MINUS,
         TIMES,
@@ -74,6 +86,7 @@ class Lexer(sly.Lexer):
     ID["continue"] = CONTINUE
     ID["func"] = FUNC
     ID["struct"] = STRUCT
+    ID["pragma"] = PRAGMA
 
     # operators
     PLUS = r"\+"
@@ -105,9 +118,13 @@ class Lexer(sly.Lexer):
     RBRACE = r"\}"
     COMMA = r","
 
-    @_(r"\d+")
+    @_(r"\d+(\.\d+)?")
     def NUMBER(self, t):
-        t.value = int(t.value)
+        if "." in t.value:
+            t.value = float(t.value)
+        else:
+            t.value = int(t.value)
+
         return t
 
     # both single and double quoted strings are vaild
@@ -118,51 +135,6 @@ class Lexer(sly.Lexer):
     def STRING(self, t):
         t.value = t.value[1:-1]
         return t
-
-
-@dataclass
-class Variable:
-    # If the value is None, the variable name will be looked up in the current scope.
-    name: Optional[str]
-    value: Any = None
-    context: Literal["get", "set", "delete"] = "get"
-
-
-class FunctionCall(Variable):
-    pass
-
-
-@dataclass
-class BinaryOp:
-    op: str
-    left: Union[BinaryOp, Variable]
-    right: Union[BinaryOp, Variable]
-
-
-@dataclass
-class Body:
-    # A declaration can be a Variable, Function, or Struct.
-    decls: List[Any]
-
-
-@dataclass
-class Function:
-    name: str
-    args: List[str]
-    body: Body
-
-
-@dataclass
-class Struct:
-    name: str
-    args: List[str]
-
-
-@dataclass
-class Conditional:
-    name: str
-    cond: Optional[Union[BinaryOp, Variable]]
-    body: Body
 
 
 class Parser(sly.Parser):
@@ -179,46 +151,43 @@ class Parser(sly.Parser):
         ("left", POWER),
     )
 
+    def __init__(self):
+        self.pragmas = set()
+
     @_("{ declaration }")
     def body(self, p):
-        return Body(decls=[d[0] for d in p[0]])
+        decls = []
+        for decl in p[0]:
+            decl = decl[0]
+            if isinstance(decl, list):
+                # condition is in a nested tuple, so get rid of it
+                decls.extend([d[0] for d in decl])
+            else:
+                decls.append(decl)
 
-    @_("statement", "func", "struct", "cond")
+        return ast.Body(decls=decls)
+
+    # Not assigning the expr to a variable is valid.
+    # i.e function calls: myFunc()
+    @_(
+        "expr",
+        "statement",
+        "func",
+        "func_return",
+        "struct",
+        "{ cond }",
+        "for_loop",
+        "while_loop",
+        "CONTINUE",
+        "BREAK",
+        "pragma",
+    )
     def declaration(self, p):
         return p[0]
 
-    @_("FUNC ID LPAREN [ args ] RPAREN LBRACE body RBRACE")
-    def func(self, p):
-        return Function(p.ID, p.args, p.body)
-
-    @_("STRUCT ID LBRACE args RBRACE")
-    def struct(self, p):
-        return Struct(p.ID, p.args)
-
-    @_("ID { COMMA ID }")
-    def args(self, p):
-        return [p[0], *[a[1] for a in p[1]]]
-
-    @_("cond_if { cond_elseif } [ cond_else ]")
-    def cond(self, p):
-        return [p.cond_if, *p.cond_elseif, p.cond_else]
-
-    @_("IF expr LBRACE body RBRACE")
-    def cond_if(self, p):
-        return Conditional("if", p.expr, p.body)
-
-    @_("ELSE cond_if")
-    def cond_elseif(self, p):
-        p[1].name = "else if"
-        return p[1]
-
-    @_("ELSE LBRACE body RBRACE")
-    def cond_else(self, p):
-        return Conditional("else", None, p.body)
-
     @_("ID ASSIGN expr")
     def statement(self, p):
-        return Variable(p.ID, p.expr, context="set")
+        return ast.Variable(p.ID, p.expr, op="set")
 
     @_(
         "ID PLUS ASSIGN expr",
@@ -229,8 +198,71 @@ class Parser(sly.Parser):
     )
     def statement(self, p):
         # statements like var += 1 are always expanded into var = var + 1
-        binop = BinaryOp(p[1], Variable(p.ID), p.expr)
-        return Variable(p.ID, binop, context="set")
+        binop = ast.BinaryOp(p[1], ast.Variable(p.ID), p.expr)
+        return ast.Variable(p.ID, binop, op="set")
+
+    @_("FUNC ID LPAREN [ args ] RPAREN [ RETURNS ] LBRACE body RBRACE")
+    def func(self, p):
+
+        if p.RETURNS is not None and "cub" not in self.pragmas:
+            self.log.warning(
+                "'returns' in function declaration is depreciated (only for Cub compatiblity).\n"
+                "If you want to suppress this, put 'pragma \"cub\"' at the top of the file."
+            )
+
+        return ast.Function(p.ID, p.args, p.body)
+
+    @_("RETURN expr")
+    def func_return(self, p):
+        return ast.FunctionReturn(p.expr)
+
+    @_("STRUCT ID LBRACE args RBRACE")
+    def struct(self, p):
+        return ast.Struct(p.ID, p.args)
+
+    @_("ID { COMMA ID }")
+    def args(self, p):
+        return [p[0], *[a[1] for a in p[1]]]
+
+    @_("FOR statement COMMA expr COMMA statement LBRACE body RBRACE")
+    def for_loop(self, p):
+        return ast.Loop(p.expr, p.body, preloop=p.statement0, postloop=p.statement1)
+
+    @_("WHILE expr LBRACE body RBRACE")
+    def while_loop(self, p):
+        return ast.Loop(p.expr, p.body)
+
+    @_("cond_if", "cond_elseif", "cond_else")
+    def cond(self, p):
+        return p[0]
+
+    @_("ELSE LBRACE body RBRACE")
+    def cond_else(self, p):
+        return ast.Conditional("else", None, p.body)
+
+    @_("ELSE IF expr LBRACE body RBRACE")
+    def cond_elseif(self, p):
+        return ast.Conditional("else if", p.expr, p.body)
+
+    @_("IF expr LBRACE body RBRACE")
+    def cond_if(self, p):
+        return ast.Conditional("if", p.expr, p.body)
+
+    @_("LBRACK [ array_literals ] RBRACK")
+    def expr(self, p):
+        return p.array_literals
+
+    @_("expr { COMMA expr }")
+    def array_literals(self, p):
+        return ast.Array([p[0], *[e[1] for e in p[1]]])
+
+    @_("ID LPAREN [ func_call_args ] RPAREN")
+    def expr(self, p):
+        return ast.FunctionCall(p.ID, p.func_call_args)
+
+    @_("expr { COMMA expr }")
+    def func_call_args(self, p):
+        return [p[0], *[a[1] for a in p[1]]]
 
     @_(
         "expr PLUS expr",
@@ -249,28 +281,38 @@ class Parser(sly.Parser):
         "expr NOT expr",
     )
     def expr(self, p):
-        return BinaryOp(p[1], p.expr0, p.expr1)
+        return ast.BinaryOp(p[1], p.expr0, p.expr1)
 
     @_("STRING", "NUMBER")
     def expr(self, p):
-        return Variable(None, p[0])
+        return ast.Variable(None, p[0])
+
+    @_("TRUE", "FALSE", "NIL")
+    def expr(self, p):
+        return ast.Variable(None, SINGLETONS[p[0]])
 
     @_("ID")
     def expr(self, p):
-        return Variable(p.ID, None, context="set")
+        return ast.Variable(p.ID, None, op="get")
 
     @_("LPAREN expr RPAREN")
     def expr(self, p):
         return p.expr
 
-    @_("ID LPAREN RPAREN")
-    def expr(self, p):
-        return FunctionCall(p.ID, [])
-
-    @_("expr { COMMA expr }")
-    def func_call_args(self, p):
-        return [p[0], *[a[1] for a in p[1]]]
+    @_("PRAGMA STRING")
+    def pragma(self, p):
+        self.pragmas.add(p.STRING)
 
     @_("")
     def empty(self, p):
         pass
+
+    def parse(self, tokens, reset=True):
+        if reset:
+            self.pragmas.clear()
+        return super().parse(tokens)
+
+    def error(self, t):
+        super().error(t)
+        # crash hard on syntax errors
+        raise RuntimeError()

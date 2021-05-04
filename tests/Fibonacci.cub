@@ -7,13 +7,11 @@ func fibonacci(n) returns {
 		return 0
 	}
 
-	else if n == 1 {
+	if n == 1 {
 		return 1
 	}
 
-	else {
-		return fibonacci(n - 1) + fibonacci(n - 2)
-	}
+	return fibonacci(n - 1) + fibonacci(n - 2)
 }
 
 a = fibonacci(10) // a = 55

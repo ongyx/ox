@@ -13,7 +13,7 @@ Because the zodiac animal this year is Ox, and to go along with the animal-theme
 
 ## Todo
 
-- [x] finish basic parser
+- [x] finish full parser (rewrote using sly)
 - [ ] code working intepreter 
 - [ ] add module system
 - [ ] add ability to interface Python modules
@@ -53,14 +53,23 @@ func pi() {
 struct Point {
   x, y
 }
-p = Point(0, 0)
 
 // The biggest feature borrowed from Go is probably struct methods.
 // A struct method (shown below) accepts a instance of the struct, plus any other parameter.
 // The first arg should be named self, but you can name it something else.
-func Point.distance(self) {
+func Point:distance(self) {
   return (self.x ^ 2) + (self.y ^ 2)
 }
+
+// Like Lua, static methods (on a uninitalised struct) use '.',
+// while instance methods (on a initalised struct) use ':'.
+// Static methods do not receive the 'self' parameter.
+func Point.new_square(length) {
+  return Point(length, length)
+}
+
+point = Point(0, 0)
+point = Point.new_square(10)
 
 // Structs can inherit members and methods from other structs.
 // New members can be defined on top of the inherited struct's definition.
@@ -68,7 +77,7 @@ struct RelativePoint inherits Point {
   cx, cy
 }
 
-func Point.relative_distance(self) {
+func RelativePoint:rel_distance(self) {
   return (abs(self.cx - self.x) ^ 2) + (abs(self.cy - self.y) ^ 2)
 }
 ```
