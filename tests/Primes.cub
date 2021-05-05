@@ -2,6 +2,8 @@
 //  Primes.cub
 //
 
+pragma "cub"
+
 func isPrime(num) returns {
 	if num < 2 {
 		return false

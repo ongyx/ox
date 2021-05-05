@@ -3,10 +3,15 @@
 # flake8: noqa
 """ox's core syntax lexer and parser."""
 
+import enum
+import sys
+import textwrap
+
 import sly
+from sly import lex, yacc
 
 from . import ast_ as ast
-
+from .exceptions import ParserError
 
 SINGLETONS = {"true": True, "false": False, "nil": None}
 
@@ -14,20 +19,20 @@ SINGLETONS = {"true": True, "false": False, "nil": None}
 # Kind of like Python's 'from __future__ import ...'.
 # Pragmas have the form 'pragma <name>' where name is the pragma to use.
 # Multiple pragmas may be declared (for now).
-PRAGMAS = {
+class Pragma(enum.Enum):
     # Allows 'returns' in a function declaration (idk why Cub needed that):
     # func myFunc() returns {
     # TODO: Alias global functions used in Cub
-    "cub",
-}
+    CUB = 0
 
 
 class Lexer(sly.Lexer):
 
-    ignore = " \t\n"
-    ignore_comment = r"//.*"
+    ignore = " \t"
 
     tokens = {
+        COMMENT,
+        LONG_COMMENT,
         ID,
         NUMBER,
         STRING,
@@ -68,6 +73,10 @@ class Lexer(sly.Lexer):
         RBRACK,
         COMMA,
     }
+
+    COMMENT = r"//.*"
+    # https://stackoverflow.com/a/33312193
+    LONG_COMMENT = r"/\*[\s\S]*?\*/"
 
     # The name can be Unicode as long as it does not start with a number (or dot).
     ID = r"[^\W\d][\w\.]*"
@@ -136,10 +145,15 @@ class Lexer(sly.Lexer):
         t.value = t.value[1:-1]
         return t
 
+    @_(r"\n+")
+    def ignore_newline(self, t):
+        self.lineno += len(t.value)
+
 
 class Parser(sly.Parser):
     tokens = Lexer.tokens
     debugfile = "parser.out"
+    lexer = Lexer()
 
     precedence = (
         ("left", OR),
@@ -152,6 +166,7 @@ class Parser(sly.Parser):
     )
 
     def __init__(self):
+        self.code = None
         self.pragmas = set()
 
     @_("{ declaration }")
@@ -181,6 +196,7 @@ class Parser(sly.Parser):
         "CONTINUE",
         "BREAK",
         "pragma",
+        "comment",
     )
     def declaration(self, p):
         return p[0]
@@ -204,10 +220,14 @@ class Parser(sly.Parser):
     @_("FUNC ID LPAREN [ args ] RPAREN [ RETURNS ] LBRACE body RBRACE")
     def func(self, p):
 
-        if p.RETURNS is not None and "cub" not in self.pragmas:
-            self.log.warning(
-                "'returns' in function declaration is depreciated (only for Cub compatiblity).\n"
-                "If you want to suppress this, put 'pragma \"cub\"' at the top of the file."
+        if p.RETURNS is not None and Pragma.CUB not in self.pragmas:
+            self.error(
+                p._slice[5],
+                "'returns' in function declaration is invalid.\n"
+                "If you want to enable backward compatibility,\n"
+                "put 'pragma \"cub\"' at the top of the file.",
+                index=5,
+                prod=p,
             )
 
         return ast.Function(p.ID, p.args, p.body)
@@ -301,18 +321,65 @@ class Parser(sly.Parser):
 
     @_("PRAGMA STRING")
     def pragma(self, p):
-        self.pragmas.add(p.STRING)
+        self.pragmas.add(Pragma[p.STRING.upper()])
 
     @_("")
     def empty(self, p):
         pass
+
+    @_("COMMENT", "LONG_COMMENT")
+    def comment(self, p):
+        return ast.Comment(p[0])
 
     def parse(self, tokens, reset=True):
         if reset:
             self.pragmas.clear()
         return super().parse(tokens)
 
-    def error(self, t):
-        super().error(t)
-        # crash hard on syntax errors
-        raise RuntimeError()
+    def parse_text(self, code):
+        self.code = code.splitlines()
+        return self.parse(self.lexer.tokenize(code))
+
+    def error(self, token, msg=None, index=None, prod=None):
+
+        line = 0
+        pos = 0
+        message = msg or "Syntax error"
+        code = "(no code here)"
+
+        if isinstance(token, lex.Token):
+            line = token.lineno - 1
+            abspos = token.index
+
+            # +1 line length for the newline...
+            pos = abspos - sum(len(line) + 1 for line in self.code[:line])
+            # ...and minus one for the newline just before the token's line.
+            pos -= 1
+
+            if self.code is not None:
+                code = self.code[line]
+
+        elif isinstance(token, yacc.YaccSymbol):
+            line = prod._slice[index - 1].lineno - 1
+
+            if self.code is not None:
+                code = self.code[line]
+                pos = code.find(token.value[0])
+
+        # pos can be -1 if the token was on the first line,
+        # or the YaccSymbol value is not in the same line as the previous token.
+        # (which should not happen...)
+        if pos < 0:
+            pos = 0
+
+        message = textwrap.dedent(
+            """
+            ERROR:{line}:{pos}: {message}
+            
+            {code}
+            {indent}^
+            """
+        ).format(line=line, pos=pos, message=message, code=code, indent=" " * pos)
+
+        # fail hard on syntax errors
+        raise ParserError(message)

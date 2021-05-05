@@ -2,9 +2,8 @@
 
 import dataclasses
 import json
-import pprint
-
 import pathlib
+import sys
 
 import oxlang.syntax
 
@@ -24,11 +23,11 @@ def test_lexer():
 def test_parser():
     for file in curdir.glob("*.cub"):
 
-        tokens = lexer.tokenize(file.read_text())
+        code = file.read_text()
 
         print(file.name)
 
-        tree = parser.parse(tokens)
+        tree = parser.parse_text(code)
 
         # print(json.dumps(dataclasses.asdict(tree), indent=2))
 

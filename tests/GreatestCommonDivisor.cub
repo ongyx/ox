@@ -2,6 +2,8 @@
 //  GreatestCommonDivisor.cub
 //
 
+pragma "cub"
+
 func gcd(p, q) returns {
 	if q == 0 {
 		return p

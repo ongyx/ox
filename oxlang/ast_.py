@@ -7,8 +7,17 @@ from dataclasses import dataclass
 from typing import Any, List, Literal, Optional, Union
 
 
+class Node:
+    pass
+
+
 @dataclass
-class Variable:
+class Comment(Node):
+    text: str
+
+
+@dataclass
+class Variable(Node):
     # The variable is a literal if value is not None.
     # Otherwise, the name is a reference to a variable in the current/global context.
     # If both are set, name is given priority (should be impossible)
@@ -22,49 +31,49 @@ class FunctionCall(Variable):
 
 
 @dataclass
-class BinaryOp:
+class BinaryOp(Node):
     op: str
     left: Union[BinaryOp, Variable]
     right: Union[BinaryOp, Variable]
 
 
 @dataclass
-class Body:
+class Body(Node):
     decls: List[Any]
 
 
 @dataclass
-class Function:
+class Function(Node):
     name: str
     args: List[str]
     body: Body
 
 
 @dataclass
-class FunctionReturn:
+class FunctionReturn(Node):
     expr: Any
 
 
 @dataclass
-class Struct:
+class Struct(Node):
     name: str
     args: List[str]
 
 
 @dataclass
-class Array:
+class Array(Node):
     exprs: List[Any]
 
 
 @dataclass
-class Conditional:
+class Conditional(Node):
     name: str
     cond: Optional[Union[BinaryOp, Variable]]
     body: Body
 
 
 @dataclass
-class Loop:
+class Loop(Node):
     cond: Union[BinaryOp, Variable]
     body: Body
     # The for loop requires these two variables. Both must have context 'set'.
