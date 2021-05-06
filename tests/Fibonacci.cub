@@ -2,7 +2,7 @@
 //  Fibonacci.cub
 //
 
-pragma "cub"
+import pragma.cub
 
 func fibonacci(n) returns {
 	if n == 0 {

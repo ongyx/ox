@@ -17,7 +17,7 @@ SINGLETONS = {"true": True, "false": False, "nil": None}
 
 # Pragmas change the behaviour of both the interpreter and parser.
 # Kind of like Python's 'from __future__ import ...'.
-# Pragmas have the form 'pragma <name>' where name is the pragma to use.
+# Pragmas have the form 'import pragma.<name>' where name is the pragma to use.
 # Multiple pragmas may be declared (for now).
 class Pragma(enum.Enum):
     # Allows 'returns' in a function declaration (idk why Cub needed that):
@@ -49,7 +49,7 @@ class Lexer(sly.Lexer):
         CONTINUE,
         FUNC,
         STRUCT,
-        PRAGMA,
+        IMPORT,
         PLUS,
         MINUS,
         TIMES,
@@ -79,7 +79,7 @@ class Lexer(sly.Lexer):
     LONG_COMMENT = r"/\*[\s\S]*?\*/"
 
     # The name can be Unicode as long as it does not start with a number (or dot).
-    ID = r"[^\W\d][\w\.]*"
+    ID = r"[^\W\d][\w\.\:]*"
 
     # keywords
     ID["true"] = TRUE
@@ -95,7 +95,7 @@ class Lexer(sly.Lexer):
     ID["continue"] = CONTINUE
     ID["func"] = FUNC
     ID["struct"] = STRUCT
-    ID["pragma"] = PRAGMA
+    ID["import"] = IMPORT
 
     # operators
     PLUS = r"\+"
@@ -125,15 +125,11 @@ class Lexer(sly.Lexer):
     RBRACK = r"\]"
     LBRACE = r"\{"
     RBRACE = r"\}"
+
     COMMA = r","
 
     @_(r"\d+(\.\d+)?")
     def NUMBER(self, t):
-        if "." in t.value:
-            t.value = float(t.value)
-        else:
-            t.value = int(t.value)
-
         return t
 
     # both single and double quoted strings are vaild
@@ -149,10 +145,17 @@ class Lexer(sly.Lexer):
     def ignore_newline(self, t):
         self.lineno += len(t.value)
 
+    def error(self, t):
+        self.index += 1
+        # propagate errors to the parser
+        return t
+
 
 class Parser(sly.Parser):
     tokens = Lexer.tokens
+
     debugfile = "parser.out"
+
     lexer = Lexer()
 
     precedence = (
@@ -167,7 +170,12 @@ class Parser(sly.Parser):
 
     def __init__(self):
         self.code = None
+        self.filename = "<string>"
         self.pragmas = set()
+
+        # keep track of the name of the parent context
+        # i.e function/struct name
+        self.context_stack = []
 
     @_("{ declaration }")
     def body(self, p):
@@ -195,11 +203,30 @@ class Parser(sly.Parser):
         "while_loop",
         "CONTINUE",
         "BREAK",
-        "pragma",
+        "import_",
         "comment",
     )
     def declaration(self, p):
         return p[0]
+
+    @_("IMPORT ID")
+    def import_(self, p):
+        module = p.ID
+
+        if module.startswith("pragma"):
+
+            _, __, pragma = module.partition(".")
+
+            if "." in pragma:
+                self.error(p._slice[1], msg=f"invalid pragma '{pragma}'")
+
+            self.pragmas.add(Pragma[pragma.upper()])
+
+        return ast.Import(module)
+
+    @_("COMMENT", "LONG_COMMENT")
+    def comment(self, p):
+        return ast.Comment(p[0])
 
     @_("ID ASSIGN expr")
     def statement(self, p):
@@ -217,18 +244,20 @@ class Parser(sly.Parser):
         binop = ast.BinaryOp(p[1], ast.Variable(p.ID), p.expr)
         return ast.Variable(p.ID, binop, op="set")
 
-    @_("FUNC ID LPAREN [ args ] RPAREN [ RETURNS ] LBRACE body RBRACE")
+    @_("FUNC ID new_context LPAREN [ args ] RPAREN [ RETURNS ] LBRACE body RBRACE")
     def func(self, p):
 
         if p.RETURNS is not None and Pragma.CUB not in self.pragmas:
             self.error(
-                p._slice[5],
+                p._slice[6],
                 "'returns' in function declaration is invalid.\n"
-                "If you want to enable backward compatibility,\n"
-                "put 'pragma \"cub\"' at the top of the file.",
-                index=5,
+                "If you want to enable backward compatibility for Cub code,\n"
+                "put 'import pragma.cub' at the top of the file.",
+                index=6,
                 prod=p,
             )
+
+        self.context_stack.pop()
 
         return ast.Function(p.ID, p.args, p.body)
 
@@ -236,9 +265,11 @@ class Parser(sly.Parser):
     def func_return(self, p):
         return ast.FunctionReturn(p.expr)
 
-    @_("STRUCT ID LBRACE args RBRACE")
+    @_("STRUCT ID new_context [ LPAREN args RPAREN ] LBRACE args RBRACE")
     def struct(self, p):
-        return ast.Struct(p.ID, p.args)
+        self.context_stack.pop()
+
+        return ast.Struct(p.ID, p.args1, p.args0)
 
     @_("ID { COMMA ID }")
     def args(self, p):
@@ -268,20 +299,16 @@ class Parser(sly.Parser):
     def cond_if(self, p):
         return ast.Conditional("if", p.expr, p.body)
 
-    @_("LBRACK [ array_literals ] RBRACK")
+    @_("LBRACK [ expr_args ] RBRACK")
     def expr(self, p):
-        return p.array_literals
+        return ast.Array(p.expr_args)
+
+    @_("ID LPAREN [ expr_args ] RPAREN")
+    def expr(self, p):
+        return ast.FunctionCall(p.ID, p.expr_args)
 
     @_("expr { COMMA expr }")
-    def array_literals(self, p):
-        return ast.Array([p[0], *[e[1] for e in p[1]]])
-
-    @_("ID LPAREN [ func_call_args ] RPAREN")
-    def expr(self, p):
-        return ast.FunctionCall(p.ID, p.func_call_args)
-
-    @_("expr { COMMA expr }")
-    def func_call_args(self, p):
+    def expr_args(self, p):
         return [p[0], *[a[1] for a in p[1]]]
 
     @_(
@@ -303,9 +330,19 @@ class Parser(sly.Parser):
     def expr(self, p):
         return ast.BinaryOp(p[1], p.expr0, p.expr1)
 
-    @_("STRING", "NUMBER")
+    @_("STRING")
     def expr(self, p):
         return ast.Variable(None, p[0])
+
+    @_("NUMBER")
+    def expr(self, p):
+        raw = p[0]
+        if "." in raw:
+            num = float(raw)
+        else:
+            num = int(raw)
+
+        return ast.Variable(None, num)
 
     @_("TRUE", "FALSE", "NIL")
     def expr(self, p):
@@ -319,25 +356,31 @@ class Parser(sly.Parser):
     def expr(self, p):
         return p.expr
 
-    @_("PRAGMA STRING")
-    def pragma(self, p):
-        self.pragmas.add(Pragma[p.STRING.upper()])
-
     @_("")
     def empty(self, p):
         pass
 
-    @_("COMMENT", "LONG_COMMENT")
-    def comment(self, p):
-        return ast.Comment(p[0])
+    @_("")
+    def new_context(self, p):
+        self.context_stack.append(f"{p[-2]} '{p[-1]}'")
+
+    @_("error")
+    def token_error(self, p):
+        self.error(p.error)
 
     def parse(self, tokens, reset=True):
         if reset:
             self.pragmas.clear()
         return super().parse(tokens)
 
-    def parse_text(self, code):
+    def parse_text(self, code, filename=None):
         self.code = code.splitlines()
+
+        if filename is not None:
+            self.filename = filename
+
+        tokens = self.lexer.tokenize(code)
+
         return self.parse(self.lexer.tokenize(code))
 
     def error(self, token, msg=None, index=None, prod=None):
@@ -351,16 +394,18 @@ class Parser(sly.Parser):
             line = token.lineno - 1
             abspos = token.index
 
-            # +1 line length for the newline...
-            pos = abspos - sum(len(line) + 1 for line in self.code[:line])
-            # ...and minus one for the newline just before the token's line.
-            pos -= 1
+            pos = abspos - sum(len(line) for line in self.code[:line])
+            pos -= line
+
+            arrows_len = len(token.value) if token.type != "ERROR" else 1
 
             if self.code is not None:
                 code = self.code[line]
 
         elif isinstance(token, yacc.YaccSymbol):
             line = prod._slice[index - 1].lineno - 1
+
+            arrows_len = len(token.value[0])
 
             if self.code is not None:
                 code = self.code[line]
@@ -374,12 +419,22 @@ class Parser(sly.Parser):
 
         message = textwrap.dedent(
             """
-            ERROR:{line}:{pos}: {message}
+            {filename}: In {context}:
+            {filename}:{line}:{pos}: error: {message}
             
             {code}
-            {indent}^
+            {indent}{arrows}
             """
-        ).format(line=line, pos=pos, message=message, code=code, indent=" " * pos)
+        ).format(
+            filename=self.filename,
+            context=self.context_stack[-1] if self.context_stack else "<global>",
+            line=line,
+            pos=pos,
+            message=message,
+            code=code,
+            indent=" " * pos,
+            arrows="^" * arrows_len,
+        )
 
         # fail hard on syntax errors
         raise ParserError(message)

@@ -1,26 +1,3 @@
-# oxlang: the ox programming language 🐂
-
-ox is a intepreted, dynamic programming language inspired by [Cub] (no relation to the [2011] one.)
-Its syntax borrows heavily from Cub itself and [golang].
-
-Since ox keeps most of Cub's semantics, existing Cub code should run in ox without any changes (backward-compatible).
-
-ox is not meant to be a production language: rather as an experiment in implementing a programming language entirely in Python.
-
-## Why the name ox?
-
-Because the zodiac animal this year is Ox, and to go along with the animal-themed names.
-
-## Todo
-
-- [x] finish full parser (rewrote using sly)
-- [ ] code working intepreter 
-- [ ] add module system
-- [ ] add ability to interface Python modules
-
-## Examples
-
-```swift
 // ox is kind of like untyped Swift (which is also what Cub was aiming for).
 // Currently, these primitive types are supported:
 
@@ -73,14 +50,9 @@ square_point = Point.new_square(10)
 // Structs can inherit members and methods from other structs.
 // New members can be defined on top of the inherited struct's definition.
 struct RelativePoint(Point) {
-  cx, cy,
+  cx, cy
 }
 
 func RelativePoint:rel_distance(self) {
   return (abs(self.cx - self.x) ^ 2) + (abs(self.cy - self.y) ^ 2)
 }
-```
-
-[2011]: https://en.wikipedia.org/wiki/Ox_(programming_language)
-[Cub]: https://github.com/louisdh/cub
-[golang]: https://golang.org

@@ -3,7 +3,6 @@
 import dataclasses
 import json
 import pathlib
-import sys
 
 import oxlang.syntax
 
@@ -27,8 +26,10 @@ def test_parser():
 
         print(file.name)
 
-        tree = parser.parse_text(code)
+        tree = parser.parse_text(code, filename=file.name)
 
-        # print(json.dumps(dataclasses.asdict(tree), indent=2))
+        # only for debugging parser
+        if False:
+            print(json.dumps(dataclasses.asdict(tree), indent=2))
 
         assert tree.decls

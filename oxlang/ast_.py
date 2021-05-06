@@ -19,7 +19,8 @@ class Comment(Node):
 @dataclass
 class Variable(Node):
     # The variable is a literal if value is not None.
-    # Otherwise, the name is a reference to a variable in the current/global context.
+    # Otherwise, the name is a reference to a variable
+    # in the current/global context.
     # If both are set, name is given priority (should be impossible)
     name: Optional[str]
     value: Any = None
@@ -58,6 +59,7 @@ class FunctionReturn(Node):
 class Struct(Node):
     name: str
     args: List[str]
+    inherits: List[str]
 
 
 @dataclass
@@ -81,3 +83,8 @@ class Loop(Node):
     # postloop is executed for every loop iteration in the loop's context.
     preloop: Optional[Variable] = None
     postloop: Optional[Variable] = None
+
+
+@dataclass
+class Import(Node):
+    module: str

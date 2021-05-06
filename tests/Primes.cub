@@ -2,7 +2,7 @@
 //  Primes.cub
 //
 
-pragma "cub"
+import pragma.cub
 
 func isPrime(num) returns {
 	if num < 2 {

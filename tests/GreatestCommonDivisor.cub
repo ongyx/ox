@@ -2,7 +2,7 @@
 //  GreatestCommonDivisor.cub
 //
 
-pragma "cub"
+import pragma.cub
 
 func gcd(p, q) returns {
 	if q == 0 {

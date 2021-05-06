@@ -2,7 +2,7 @@
 //  Factorial.cub
 //
 
-pragma "cub"
+import pragma.cub
 
 func factorial(x) returns {
 	

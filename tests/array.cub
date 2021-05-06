@@ -1,0 +1,5 @@
+an_array = [1,2,3,4,5]
+
+an_array += 5
+
+more_complicated_array = ["l", "o", "l"] + ["e", "z"]
