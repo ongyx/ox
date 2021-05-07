@@ -6,7 +6,7 @@ The bytecode emitted by this implementation is documented below.
 
 All numbers are represented as big-endian.
 
-The start of the bytecode should always be the three-byte string 'SPN'.
+The start of the bytecode should always be the 3-byte string 'SPN'.
 
 Scorpion is based on instructions: an opcode, which may be followed by arguments.
 
@@ -48,33 +48,6 @@ from typing import List, Union
 MAGIC = b"SPN"
 OFFSET = len(MAGIC)
 
-INS_HEADER = struct.Struct(">2B")
-
-ARG_TYPES = {
-    "bytes": b"s",
-    "int": b"i",
-    # Float in python is actually a C double, so we use double here too to avoid precision errors.
-    "float": b"d",
-    "bool": b"?",
-}
-
-ARG_HEADER = struct.Struct(">cH")
-
-
-def _as_bytecode(arg):
-    fmt = ARG_TYPES[arg.__class__.__name__]
-
-    if fmt == b"s":
-        arg_len = len(arg)
-        arg_data = struct.pack(f">{arg_len}s", arg)
-    else:
-        arg_len = struct.Struct(fmt).size
-        arg_data = struct.pack(f">{fmt.decode()}", arg)
-
-    arg_header = ARG_HEADER.pack(fmt, arg_len)
-
-    return arg_header + arg_data
-
 
 class Opcode(enum.Enum):
     PUSH_CONST = 0
@@ -115,37 +88,6 @@ class Opcode(enum.Enum):
 class Instruction:
     opcode: Opcode
     args: List[Union[bytes, int, float, bool]]
-    length: int = 0
 
-    def dump(self) -> bytes:
-        header = INS_HEADER.pack(self.opcode.value, len(self.args))
-        args_data = b"".join(_as_bytecode(arg) for arg in self.args)
-
-        return header + args_data
-
-    @classmethod
-    def load(cls, bytecode: bytes, offset: int) -> Instruction:
-        opcode, nargs = INS_HEADER.unpack(bytecode[offset : offset + 2])
-
-        args = []
-
-        h_start = offset + 2
-        while nargs > 0:
-            h_end = h_start + 3
-
-            arg_type, arg_len = ARG_HEADER.unpack(bytecode[h_start:h_end])
-
-            if arg_type == b"s":
-                fmt = f">{arg_len}s"
-            else:
-                fmt = f">{arg_type.decode()}"
-
-            arg_data = bytecode[h_end : h_end + arg_len]
-            arg = struct.unpack(fmt, arg_data)[0]
-
-            args.append(arg)
-
-            h_start = h_end + arg_len
-            nargs -= 1
-
-        return cls(opcode, args, h_start)
+    def dump(self):
+        return {"opcode": self.opcode, "args": self.args}
