@@ -18,7 +18,7 @@ is_the_answer_to_life_and_everything = my_var >= 42
 // Arrays are analogous to lists.
 // To append, use '+='.
 an_array = [4, 2, 0]
-an_array += 1
+an_array += [1]
 
 // Functions define an operation so you don't have to keep copying and pasting the same section of code.
 func pi() {

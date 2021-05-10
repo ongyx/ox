@@ -30,6 +30,7 @@ def test_parser():
 
         # only for debugging parser
         if file.name == "conditional.cub":
-            print(json.dumps(dataclasses.asdict(tree), indent=2))
+            # print(json.dumps(dataclasses.asdict(tree), indent=2))
+            print(tree)
 
         assert tree.decls

@@ -2,7 +2,8 @@
 lol = 1 + (2 + (3 + (4 + (5))))
 
 // in-place arithmetic
-qwerty += lol + nil
+qwerty = ""
+qwerty += "lol"
 
 lol = "0"
 lol = '0'

@@ -3,15 +3,8 @@
 
 from __future__ import annotations
 
-import enum
 from dataclasses import dataclass
 from typing import Any, List, Optional, Union
-
-
-class Context(int, enum.Enum):
-    LOAD = 0
-    STORE = 1
-    DEL = 2
 
 
 class Node:
@@ -33,18 +26,29 @@ class Constant(Node):
 class Variable(Node):
     # A variable in the current or global namespace.
     name: str
-    ctx: Context = Context.LOAD
 
 
 @dataclass
 class Assign(Node):
-    name: Variable
+    var: Variable
     value: Any  # can be a constant or a expr
 
 
 @dataclass
+class Function(Variable):
+    args: List[str]
+    body: Body
+
+
+@dataclass
 class FunctionCall(Variable):
-    args: Optional[List[Any]] = None
+    # This must be set to an empty list if there are no args.
+    args: List[Any]
+
+
+@dataclass
+class FunctionReturn(Node):
+    expr: Any
 
 
 @dataclass
@@ -66,20 +70,7 @@ class Body(Node):
 
 
 @dataclass
-class Function(Node):
-    name: str
-    args: List[str]
-    body: Body
-
-
-@dataclass
-class FunctionReturn(Node):
-    expr: Any
-
-
-@dataclass
-class Struct(Node):
-    name: str
+class Struct(Variable):
     args: List[str]
     inherits: List[str]
 
@@ -103,9 +94,8 @@ class Conditional(Node):
 class Loop(Node):
     cond: Any
     body: Body
-    # The for loop requires these two variables. Both must have context 'set'.
-    # preloop is executed once in the loop's parent context.
-    # postloop is executed for every loop iteration in the loop's context.
+    # preloop is executed once in the loop's context.
+    # postloop is executed for every iteration in the loop's context.
     preloop: Optional[Variable] = None
     postloop: Optional[Variable] = None
 

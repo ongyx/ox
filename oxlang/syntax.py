@@ -115,8 +115,8 @@ class Lexer(sly.Lexer):
     NE = r"!="
 
     # boolean operators
-    OR = r"\|\|"
     AND = r"\&\&"
+    OR = r"\|\|"
     NOT = r"\!"
 
     LPAREN = r"\("
@@ -230,7 +230,7 @@ class Parser(sly.Parser):
 
     @_("ID ASSIGN expr")
     def statement(self, p):
-        return ast.Assign(ast.Variable(p.ID, ctx=ast.Context.STORE), p.expr)
+        return ast.Assign(ast.Variable(p.ID), p.expr)
 
     @_(
         "ID PLUS ASSIGN expr",
@@ -242,7 +242,7 @@ class Parser(sly.Parser):
     def statement(self, p):
         # statements like var += 1 are always expanded into var = var + 1
         binop = ast.BinaryOp(p[1], ast.Variable(p.ID), p.expr)
-        return ast.Assign(ast.Variable(p.ID, ctx=ast.Context.STORE), binop)
+        return ast.Assign(ast.Variable(p.ID), binop)
 
     @_("FUNC ID new_context LPAREN [ args ] RPAREN [ RETURNS ] LBRACE body RBRACE")
     def func(self, p):
@@ -259,7 +259,7 @@ class Parser(sly.Parser):
 
         self.context_stack.pop()
 
-        return ast.Function(p.ID, p.args, p.body)
+        return ast.Function(p.ID, p.args or [], p.body)
 
     @_("RETURN expr")
     def func_return(self, p):
@@ -314,11 +314,18 @@ class Parser(sly.Parser):
 
     @_("ID LPAREN [ expr_args ] RPAREN")
     def expr(self, p):
-        return ast.FunctionCall(name=p.ID, args=p.expr_args)
+        return ast.FunctionCall(name=p.ID, args=p.expr_args or [])
 
     @_("expr { COMMA expr }")
     def expr_args(self, p):
         return [p[0], *[a[1] for a in p[1]]]
+
+    @_(
+        "NOT expr",
+        "MINUS expr",  # unary minus
+    )
+    def expr(self, p):
+        return ast.UnaryOp(p[0], p.expr)
 
     @_(
         "expr PLUS expr",
@@ -334,13 +341,9 @@ class Parser(sly.Parser):
         "expr NE expr",
         "expr AND expr",
         "expr OR expr",
-        "NOT expr",
     )
     def expr(self, p):
-        if len(p) == 3:
-            return ast.BinaryOp(p[1], p.expr0, p.expr1)
-        else:
-            return ast.BinaryOp(p[0], None, p.expr)
+        return ast.BinaryOp(p[1], p.expr0, p.expr1)
 
     @_("STRING")
     def expr(self, p):
