@@ -4,6 +4,8 @@
 
 import pragma.cub
 
+import math
+
 func gcd(p, q) returns {
 	if q == 0 {
 		return p

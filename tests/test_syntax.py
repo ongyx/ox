@@ -1,10 +1,8 @@
 # coding: utf8
 
-import dataclasses
-import json
 import pathlib
 
-import oxlang.syntax
+import oxlang.syntax  # type:ignore
 
 curdir = pathlib.Path(__file__).parent
 lexer = oxlang.syntax.Lexer()
@@ -28,9 +26,7 @@ def test_parser():
 
         tree = parser.parse_text(code, filename=file.name)
 
-        # only for debugging parser
-        if file.name == "conditional.cub":
-            # print(json.dumps(dataclasses.asdict(tree), indent=2))
-            print(tree)
+        # if file.name == "Factorial.cub":
+        #    print(tree)
 
         assert tree.decls

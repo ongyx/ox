@@ -1,0 +1,5 @@
+func foo(bar...) {
+  for baz in bar {
+    print(baz)
+  }
+}

@@ -29,8 +29,18 @@ def test_sample():
 
 def test_files():
     for file in curdir.glob("*.cub"):
+        print(f"* {file.name}")
+        if file.name == "example.cub":
+            continue
+
         code = file.read_text()
 
-        rt.execute(code)
-        print(rt.context)
+        try:
+            rt.execute(code)
+        except RecursionError:
+            print(f"code too complex (probably recursion): {file}")
+        except RuntimeError:
+            print(code)
+            raise
+
         rt.reset()

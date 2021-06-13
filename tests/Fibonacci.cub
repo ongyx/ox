@@ -4,6 +4,7 @@
 
 import pragma.cub
 
+
 func fibonacci(n) returns {
 	if n == 0 {
 		return 0

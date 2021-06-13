@@ -11,11 +11,22 @@ ox is not meant to be a production language: rather as an experiment in implemen
 
 Because the zodiac animal this year is Ox, and to go along with the animal-themed names.
 
+What it **can** do:
+
+* Full Cub syntax support (except for `do` and `repeat while` loops).
+* Import modules (you can import math functions using `import math`)
+
+What it **cannot** do:
+
+* Recursive functions (because of Python stack limitations).
+  Maybe it would be a better idea to compile Ox code down into [Scorpion] bytecode and run it in an intepreter instead.
+* Struct methods (for now).
+
 ## Todo
 
 - [x] finish full parser (rewrote using sly)
-- [ ] code working intepreter 
-- [ ] add module system
+- [x] code working intepreter 
+- [x] add module system (puts all functions in global context though)
 - [ ] add ability to interface Python modules
 
 ## Examples

@@ -3,22 +3,22 @@
 
 // Strings (to have double quotes in a string, use single quotes, and vice versa.)
 // Of course, UTF-8 is supported.
-my_var = "Hello World!"
+//my_var = "Hello World!"
 
 // Numbers are all floating-point as in Cub.
 // Like Python, variables do not have a fixed type, and can be reassigned.
 // (The '.0' can be omitted.)
-my_var = 42
+//my_var = 42
 
 // Booleans can either be true or false.
 // Comparisons will return a boolean.
-a_bool = true
-is_the_answer_to_life_and_everything = my_var >= 42
+//a_bool = true
+//is_the_answer_to_life_and_everything = my_var >= 42
 
 // Arrays are analogous to lists.
 // To append, use '+='.
-an_array = [4, 2, 0]
-an_array += [1]
+//an_array = [4, 2, 0]
+//an_array += [1]
 
 // Functions define an operation so you don't have to keep copying and pasting the same section of code.
 func pi() {

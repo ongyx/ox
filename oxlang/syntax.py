@@ -7,7 +7,7 @@ import enum
 import sys
 import textwrap
 
-import sly
+import sly  # type: ignore
 from sly import lex, yacc
 
 from . import ast_ as ast
@@ -44,6 +44,7 @@ class Lexer(sly.Lexer):
         RETURN,
         RETURNS,
         FOR,
+        IN,
         WHILE,
         BREAK,
         CONTINUE,
@@ -72,6 +73,7 @@ class Lexer(sly.Lexer):
         LBRACK,
         RBRACK,
         COMMA,
+        ELLIPSIS,
     }
 
     COMMENT = r"//.*"
@@ -90,6 +92,7 @@ class Lexer(sly.Lexer):
     ID["return"] = RETURN
     ID["returns"] = RETURNS
     ID["for"] = FOR
+    ID["in"] = IN
     ID["while"] = WHILE
     ID["break"] = BREAK
     ID["continue"] = CONTINUE
@@ -126,7 +129,8 @@ class Lexer(sly.Lexer):
     LBRACE = r"\{"
     RBRACE = r"\}"
 
-    COMMA = r","
+    COMMA = ","
+    ELLIPSIS = r"\.\.\."
 
     @_(r"\d+(\.\d+)?")
     def NUMBER(self, t):
@@ -200,6 +204,7 @@ class Parser(sly.Parser):
         "struct",
         "{ cond }",
         "for_loop",
+        "for_in_loop",
         "while_loop",
         "CONTINUE",
         "BREAK",
@@ -271,9 +276,16 @@ class Parser(sly.Parser):
 
         return ast.Struct(p.ID, p.args1, p.args0)
 
-    @_("ID { COMMA ID }")
+    @_("ID { COMMA ID } [ ELLIPSIS ]")
     def args(self, p):
-        return [p[0], *[a[1] for a in p[1]]]
+        args = [p[0], *[a[1] for a in p[1]]]
+        if p[2][0] is not None:
+            args[-1] += "..."
+        return args
+
+    @_("FOR ID IN expr LBRACE body RBRACE")
+    def for_in_loop(self, p):
+        return ast.ForInLoop(var=ast.Variable(name=p.ID), expr=p.expr, body=p.body)
 
     @_("FOR statement COMMA expr COMMA statement LBRACE body RBRACE")
     def for_loop(self, p):
@@ -308,13 +320,22 @@ class Parser(sly.Parser):
         else:
             return p.body
 
+    # index (i.e a[0])
+    @_("expr index { index }")
+    def expr(self, p):
+        return ast.Index(target=p.expr, by=[p.index0, *[i[0] for i in p[2]]])
+
+    @_("LBRACK expr RBRACK")
+    def index(self, p):
+        return p.expr
+
     @_("LBRACK [ expr_args ] RBRACK")
     def expr(self, p):
         return ast.Array(p.expr_args)
 
     @_("ID LPAREN [ expr_args ] RPAREN")
     def expr(self, p):
-        return ast.FunctionCall(name=p.ID, args=p.expr_args or [])
+        return ast.Call(name=p.ID, args=p.expr_args or [])
 
     @_("expr { COMMA expr }")
     def expr_args(self, p):
@@ -372,16 +393,12 @@ class Parser(sly.Parser):
         return p.expr
 
     @_("")
-    def empty(self, p):
-        pass
-
-    @_("")
     def new_context(self, p):
         self.context_stack.append(f"{p[-2]} '{p[-1]}'")
 
-    @_("error")
-    def token_error(self, p):
-        self.error(p.error)
+    # @_("error")
+    # def token_error(self, p):
+    #    self.error(p.error)
 
     def parse(self, tokens, reset=True):
         if reset:

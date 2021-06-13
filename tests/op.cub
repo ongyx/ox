@@ -1,2 +1,2 @@
-a_bool = True
+a_bool = true
 should_be_false = !a_bool

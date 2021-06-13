@@ -41,7 +41,7 @@ class Function(Variable):
 
 
 @dataclass
-class FunctionCall(Variable):
+class Call(Variable):
     # This must be set to an empty list if there are no args.
     args: List[Any]
 
@@ -81,6 +81,12 @@ class Array(Node):
 
 
 @dataclass
+class Index(Node):
+    target: Any
+    by: List[Any]
+
+
+@dataclass
 class Conditional(Node):
     cond: Any
     body: Body
@@ -96,8 +102,16 @@ class Loop(Node):
     body: Body
     # preloop is executed once in the loop's context.
     # postloop is executed for every iteration in the loop's context.
-    preloop: Optional[Variable] = None
-    postloop: Optional[Variable] = None
+    preloop: Optional[Assign] = None
+    postloop: Optional[Assign] = None
+
+
+@dataclass
+class ForInLoop(Node):
+    # A special case of 'for' to iterate over a string/array.
+    var: Variable
+    expr: Any
+    body: Body
 
 
 @dataclass

@@ -11,4 +11,7 @@ struct RelativePoint(Point) {
 }
 
 // syntactically correct, but invalid (can't add structs together)
-myPoint = Point(1 + (2 + (3)), 2, 3) + Point(1,2)
+//myPoint = Point(1 + (2 + (3)), 2, 3) + Point(1,2)
+
+p = Point(1, 2)
+println(p)

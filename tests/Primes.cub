@@ -4,6 +4,8 @@
 
 import pragma.cub
 
+import math
+
 func isPrime(num) returns {
 	if num < 2 {
 		return false
