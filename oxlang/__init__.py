@@ -3,4 +3,5 @@
 Inspired by the Cub Programming Language created by Louis D'hauwe.
 """
 
-__version__ = "0.0.1a0"
+from .__version__ import __version__  # noqa: F401
+from .runtime import Runtime  # noqa: F401

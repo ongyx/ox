@@ -59,13 +59,13 @@ class Runtime:
     def __init__(self):
         self.stack = collections.deque()
 
-    def execute(ins: Instruction):
+    def execute(self, ins: Instruction):
         opcode_name = ins.opcode.name
         opcode_func = getattr(self, f"ins_{opcode_name.lower()}")
 
         opcode_func(*ins.args)
 
-    def push_const(self, value: Primitive):
+    def ins_push_const(self, value: Primitive):
         self.stack.append(value)
 
     def ins_add(self):

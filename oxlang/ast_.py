@@ -7,8 +7,10 @@ from dataclasses import dataclass
 from typing import Any, List, Optional, Union
 
 
+@dataclass
 class Node:
-    pass
+    lineno: int
+    index: int
 
 
 @dataclass

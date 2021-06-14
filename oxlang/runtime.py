@@ -2,6 +2,7 @@
 
 import enum
 import functools
+import operator
 import pathlib
 from typing import Callable, List, Optional
 
@@ -11,32 +12,40 @@ STDLIB_PATH = pathlib.Path(__file__).parent / "stdlib"
 
 
 BINOP_MAP = {
-    "+": "__add__",
-    "-": "__sub__",
-    "*": "__mul__",
-    "/": "__div__",
-    "^": "__pow__",
-    "==": "__eq__",
-    "!=": "__ne__",
-    "<": "__lt__",
-    "<=": "__le__",
-    ">": "__gt__",
-    ">=": "__ge__",
+    "+": "add",
+    "-": "sub",
+    "*": "mul",
+    "/": "truediv",
+    "^": "pow",
+    "==": "eq",
+    "!=": "ne",
+    "<": "lt",
+    "<=": "le",
+    ">": "gt",
+    ">=": "ge",
+    "&&": "and_",
+    "||": "or_",
 }
 
 UNOP_MAP = {
-    "-": "__neg__",
-    "!": "__bool__",
+    "-": "neg",
+    "!": "not_",
 }
 
 
-# for nested structs
 def _deep_get(d, ks):
     v = d
     for k in ks:
         v = v[k]
 
     return v
+
+
+def _deep_set(d, ks, v):
+    for k in ks[:-1]:
+        d = d[k]
+
+    d[ks[-1]] = v
 
 
 class BodyResult(enum.Enum):
@@ -54,6 +63,8 @@ class Runtime:
         self.reset()
 
         self.lib_paths = [STDLIB_PATH]
+
+        self.code = []
 
     def register(
         self, name: str, args: List[str], func: Callable, context: Optional[dict] = None
@@ -73,7 +84,7 @@ class Runtime:
         if context is None:
             context = self.context
 
-        wrapper = ast.Function(name=name, args=args, body=func)  # type: ignore
+        wrapper = ast.Function(0, 0, name=name, args=args, body=func)  # type: ignore
 
         context[name] = wrapper
 
@@ -89,7 +100,9 @@ class Runtime:
 
         return context
 
-    def execute(self, code: str, context: Optional[dict] = None):
+    def execute(
+        self, code: str, context: Optional[dict] = None, _library: bool = False
+    ):
         """Execute code in the runtime.
 
         Args:
@@ -101,8 +114,40 @@ class Runtime:
             # global context
             context = self.context
 
-        body = self.parser.parse_text(code)
-        self.visit(body, context)
+        self.code = code.splitlines()
+
+        try:
+            body = self.parser.parse_text(code)
+            self.visit(body, context)
+        except Exception:
+            raise
+
+    def _index(self, lineno, index):
+        lines = self.code[:lineno]
+        total = sum(len(line) for line in lines)
+
+        return index - total - len(lines)
+
+    def error(self, node: ast.Node, msg: str = "Runtime error"):
+
+        # line numbers are always zero-indexed.
+        lineno = node.lineno - 1
+        index = self._index(lineno, node.index)
+
+        code_line = self.code[lineno]
+
+        raise RuntimeError(
+            syntax.ERROR_TEMPLATE.format(  # type: ignore
+                filename=self.parser.filename,
+                context="<runtime>",
+                line=lineno,
+                pos=index,
+                message=msg,
+                code=code_line,
+                indent=" " * index,
+                arrows="^" * (len(code_line) - index),
+            )
+        )
 
     def visit(self, node: ast.Node, context: dict):
         visitor = getattr(self, f"visit_{node.__class__.__name__}", self.visit_generic)
@@ -125,9 +170,9 @@ class Runtime:
                 pass
 
         if code is None:
-            raise RuntimeError(f"library not found: {node.module}")
+            self.error(node, f"library not found: {node.module}")
 
-        self.execute(code)
+        self.execute(code, _library=True)
 
     def visit_Comment(self, node, context):
         pass
@@ -143,10 +188,10 @@ class Runtime:
             except (KeyError, TypeError):
                 pass
 
-        raise RuntimeError(f"undefined variable: {node.name}")
+        self.error(node, f"undefined variable: {node.name}")
 
     def visit_Assign(self, node, context):
-        context[node.var.name] = self.visit(node.value, context)
+        _deep_set(context, node.var.name.split("."), self.visit(node.value, context))
 
     def visit_Function(self, node, context):
         context[node.name] = node
@@ -156,15 +201,16 @@ class Runtime:
         func = self.visit_Variable(node, context)
 
         if not isinstance(func, (ast.Function, ast.Struct)):
-            raise RuntimeError("can't call {node.name}: not a function or struct")
+            self.error(node, f"can't call {node.name}: not a function or struct")
 
         expected = len(func.args)
         got = len(node.args)
 
         if not func.args[-1].endswith("...") and expected != got:
             # not a varadic function
-            raise RuntimeError(
-                f"function or struct {func.name} expected {expected} args, got {got}"
+            self.error(
+                node,
+                f"function or struct {func.name} expected {expected} args, got {got}",
             )
 
         args = [self.visit(arg, context) for arg in node.args]
@@ -194,15 +240,15 @@ class Runtime:
     def visit_UnaryOp(self, node, context):
         value = self.visit(node.right, context)
 
-        dunder = getattr(value, UNOP_MAP[node.op])
-        return dunder()
+        dunder = getattr(operator, UNOP_MAP[node.op])
+        return dunder(value)
 
     def visit_BinaryOp(self, node, context):
         left_value = self.visit(node.left, context)
         right_value = self.visit(node.right, context)
 
-        dunder = getattr(left_value, BINOP_MAP[node.op])
-        return dunder(right_value)
+        dunder = getattr(operator, BINOP_MAP[node.op])
+        return dunder(left_value, right_value)
 
     def visit_Body(self, node, context):
         for decl in node.decls:
@@ -258,7 +304,7 @@ class Runtime:
         expr = self.visit(node.expr, context)
 
         if not isinstance(expr, (str, list)):
-            raise RuntimeError("can't iterate: not a string or list")
+            self.error(node, "can't iterate: not a string or list")
 
         for item in expr:
             context[node.var.name] = item

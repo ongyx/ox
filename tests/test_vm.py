@@ -16,8 +16,7 @@ struct Point {
 }
 
 p = Point(1, 2)
-
-x = p.x
+p.x = 9
 """
 
 

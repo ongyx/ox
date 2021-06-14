@@ -13,6 +13,16 @@ from sly import lex, yacc
 from . import ast_ as ast
 from .exceptions import ParserError
 
+ERROR_TEMPLATE = textwrap.dedent(
+    """
+    {filename}: In {context}:
+    {filename}:{line}:{pos}: error: {message}
+    
+    {code}
+    {indent}{arrows}
+    """
+)
+
 SINGLETONS = {"true": True, "false": False, "nil": None}
 
 # Pragmas change the behaviour of both the interpreter and parser.
@@ -155,6 +165,13 @@ class Lexer(sly.Lexer):
         return t
 
 
+def _loc(prod):
+    try:
+        return prod.lineno, prod.index
+    except AttributeError:
+        return 0, 0
+
+
 class Parser(sly.Parser):
     tokens = Lexer.tokens
 
@@ -186,13 +203,14 @@ class Parser(sly.Parser):
         decls = []
         for decl in p[0]:
             decl = decl[0]
+
             if isinstance(decl, list):
                 # condition is in a nested tuple, so get rid of it
                 decls.extend([d[0] for d in decl])
             else:
                 decls.append(decl)
 
-        return ast.Body(decls=decls)
+        return ast.Body(*_loc(p), decls=decls)
 
     # Not assigning the expr to a variable is valid.
     # i.e function calls: myFunc()
@@ -227,15 +245,15 @@ class Parser(sly.Parser):
 
             self.pragmas.add(Pragma[pragma.upper()])
 
-        return ast.Import(module)
+        return ast.Import(*_loc(p), module)
 
     @_("COMMENT", "LONG_COMMENT")
     def comment(self, p):
-        return ast.Comment(p[0])
+        return ast.Comment(*_loc(p), p[0])
 
     @_("ID ASSIGN expr")
     def statement(self, p):
-        return ast.Assign(ast.Variable(p.ID), p.expr)
+        return ast.Assign(*_loc(p), ast.Variable(*_loc(p), p.ID), p.expr)
 
     @_(
         "ID PLUS ASSIGN expr",
@@ -246,8 +264,8 @@ class Parser(sly.Parser):
     )
     def statement(self, p):
         # statements like var += 1 are always expanded into var = var + 1
-        binop = ast.BinaryOp(p[1], ast.Variable(p.ID), p.expr)
-        return ast.Assign(ast.Variable(p.ID), binop)
+        binop = ast.BinaryOp(*_loc(p), p[1], ast.Variable(*_loc(p), p.ID), p.expr)
+        return ast.Assign(*_loc(p), ast.Variable(*_loc(p), p.ID), binop)
 
     @_("FUNC ID new_context LPAREN [ args ] RPAREN [ RETURNS ] LBRACE body RBRACE")
     def func(self, p):
@@ -264,17 +282,17 @@ class Parser(sly.Parser):
 
         self.context_stack.pop()
 
-        return ast.Function(p.ID, p.args or [], p.body)
+        return ast.Function(*_loc(p), p.ID, p.args or [], p.body)
 
     @_("RETURN expr")
     def func_return(self, p):
-        return ast.FunctionReturn(p.expr)
+        return ast.FunctionReturn(*_loc(p), p.expr)
 
     @_("STRUCT ID new_context [ LPAREN args RPAREN ] LBRACE args RBRACE")
     def struct(self, p):
         self.context_stack.pop()
 
-        return ast.Struct(p.ID, p.args1, p.args0)
+        return ast.Struct(*_loc(p), p.ID, p.args1, p.args0)
 
     @_("ID { COMMA ID } [ ELLIPSIS ]")
     def args(self, p):
@@ -285,15 +303,19 @@ class Parser(sly.Parser):
 
     @_("FOR ID IN expr LBRACE body RBRACE")
     def for_in_loop(self, p):
-        return ast.ForInLoop(var=ast.Variable(name=p.ID), expr=p.expr, body=p.body)
+        return ast.ForInLoop(
+            *_loc(p), var=ast.Variable(*_loc(p), name=p.ID), expr=p.expr, body=p.body
+        )
 
     @_("FOR statement COMMA expr COMMA statement LBRACE body RBRACE")
     def for_loop(self, p):
-        return ast.Loop(p.expr, p.body, preloop=p.statement0, postloop=p.statement1)
+        return ast.Loop(
+            *_loc(p), p.expr, p.body, preloop=p.statement0, postloop=p.statement1
+        )
 
     @_("WHILE expr LBRACE body RBRACE")
     def while_loop(self, p):
-        return ast.Loop(p.expr, p.body)
+        return ast.Loop(*_loc(p), p.expr, p.body)
 
     @_("{ _cond }")
     def cond(self, p):
@@ -316,14 +338,14 @@ class Parser(sly.Parser):
     )
     def _cond(self, p):
         if len(p) > 4:
-            return ast.Conditional(p.expr, p.body)
+            return ast.Conditional(*_loc(p), p.expr, p.body)
         else:
             return p.body
 
     # index (i.e a[0])
     @_("expr index { index }")
     def expr(self, p):
-        return ast.Index(target=p.expr, by=[p.index0, *[i[0] for i in p[2]]])
+        return ast.Index(*_loc(p), target=p.expr, by=[p.index0, *[i[0] for i in p[2]]])
 
     @_("LBRACK expr RBRACK")
     def index(self, p):
@@ -331,11 +353,11 @@ class Parser(sly.Parser):
 
     @_("LBRACK [ expr_args ] RBRACK")
     def expr(self, p):
-        return ast.Array(p.expr_args)
+        return ast.Array(*_loc(p), p.expr_args)
 
     @_("ID LPAREN [ expr_args ] RPAREN")
     def expr(self, p):
-        return ast.Call(name=p.ID, args=p.expr_args or [])
+        return ast.Call(*_loc(p), name=p.ID, args=p.expr_args or [])
 
     @_("expr { COMMA expr }")
     def expr_args(self, p):
@@ -346,7 +368,7 @@ class Parser(sly.Parser):
         "MINUS expr",  # unary minus
     )
     def expr(self, p):
-        return ast.UnaryOp(p[0], p.expr)
+        return ast.UnaryOp(*_loc(p), p[0], p.expr)
 
     @_(
         "expr PLUS expr",
@@ -364,11 +386,11 @@ class Parser(sly.Parser):
         "expr OR expr",
     )
     def expr(self, p):
-        return ast.BinaryOp(p[1], p.expr0, p.expr1)
+        return ast.BinaryOp(*_loc(p), p[1], p.expr0, p.expr1)
 
     @_("STRING")
     def expr(self, p):
-        return ast.Constant(p[0])
+        return ast.Constant(*_loc(p), p[0])
 
     @_("NUMBER")
     def expr(self, p):
@@ -378,15 +400,15 @@ class Parser(sly.Parser):
         else:
             num = int(raw)
 
-        return ast.Constant(num)
+        return ast.Constant(*_loc(p), num)
 
     @_("TRUE", "FALSE", "NIL")
     def expr(self, p):
-        return ast.Constant(SINGLETONS[p[0]])
+        return ast.Constant(*_loc(p), SINGLETONS[p[0]])
 
     @_("ID")
     def expr(self, p):
-        return ast.Variable(p.ID)
+        return ast.Variable(*_loc(p), p.ID)
 
     @_("LPAREN expr RPAREN")
     def expr(self, p):
@@ -395,10 +417,6 @@ class Parser(sly.Parser):
     @_("")
     def new_context(self, p):
         self.context_stack.append(f"{p[-2]} '{p[-1]}'")
-
-    # @_("error")
-    # def token_error(self, p):
-    #    self.error(p.error)
 
     def parse(self, tokens, reset=True):
         if reset:
@@ -449,15 +467,7 @@ class Parser(sly.Parser):
         if pos < 0:
             pos = 0
 
-        message = textwrap.dedent(
-            """
-            {filename}: In {context}:
-            {filename}:{line}:{pos}: error: {message}
-            
-            {code}
-            {indent}{arrows}
-            """
-        ).format(
+        message = ERROR_TEMPLATE.format(
             filename=self.filename,
             context=self.context_stack[-1] if self.context_stack else "<global>",
             line=line,
