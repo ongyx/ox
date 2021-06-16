@@ -24,7 +24,7 @@ test = [
 ]
 
 [tool.flit.scripts]
-ox = "ox.repl:main"
+ox = "oxlang.repl:main"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
