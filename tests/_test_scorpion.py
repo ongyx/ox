@@ -1,6 +1,6 @@
 # coding: utf8
 
-from oxlang.scorpion import Opcode, Instruction
+from ox.scorpion import Opcode, Instruction
 
 
 def test_bytecode():

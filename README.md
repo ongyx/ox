@@ -1,4 +1,4 @@
-# oxlang: the ox programming language 🐂
+# ox: the ox programming language 🐂
 
 ox is a intepreted, dynamic programming language inspired by [Cub] (no relation to the [2011] one.)
 Its syntax borrows heavily from Cub itself and [golang].

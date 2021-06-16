@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 module = "oxlang"
 author = "Ong Yong Xin"
 author-email = "ongyongxin2020+github@gmail.com"
-home-page = "https://github.com/ongyx/oxlang"
+home-page = "https://github.com/ongyx/ox"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -23,8 +23,8 @@ test = [
     "pytest>=6.2.2"
 ]
 
-#[tool.flit.scripts]
-#putao = "putao.cli:cli"
+[tool.flit.scripts]
+ox = "ox.repl:main"
 
 [tool.pytest.ini_options]
 minversion = "6.0"

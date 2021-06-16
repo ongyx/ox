@@ -2,7 +2,7 @@
 
 import pathlib
 
-from oxlang.runtime import Runtime
+from ox.runtime import Runtime
 
 curdir = pathlib.Path(__file__).parent
 

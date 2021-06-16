@@ -2,11 +2,11 @@
 
 import pathlib
 
-import oxlang.syntax  # type:ignore
+import ox.syntax  # type:ignore
 
 curdir = pathlib.Path(__file__).parent
-lexer = oxlang.syntax.Lexer()
-parser = oxlang.syntax.Parser()
+lexer = ox.syntax.Lexer()
+parser = ox.syntax.Parser()
 
 
 def test_lexer():
