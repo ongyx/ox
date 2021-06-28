@@ -3,7 +3,7 @@ while true {
 }
 
 for i = 1, i < 4, i += 1 {
-  println(i)
+  print(i)
 }
 
 s = "Lorem ipsum dolor sit amet consectetuer"
@@ -12,4 +12,4 @@ for c in s {
   print(c)
 }
 
-println()
+print()

@@ -4,8 +4,8 @@ an_array += [5]
 
 more_complicated_array = ["l", "o", "l"] + ["e", "z"]
 
-println(an_array)
+print(an_array)
 
 nested = ["a", ["b", ["c"]]]
 
-println(nested[1][1])
+print(nested[1][1])

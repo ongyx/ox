@@ -22,7 +22,6 @@ p.x = 9
 
 def test_sample():
     rt.execute(sample)
-    print(rt.context)
     rt.reset()
 
 
@@ -34,12 +33,6 @@ def test_files():
 
         code = file.read_text()
 
-        try:
-            rt.execute(code)
-        except RecursionError:
-            print(f"code too complex (probably recursion): {file}")
-        except RuntimeError:
-            print(code)
-            raise
+        rt.execute(code)
 
         rt.reset()

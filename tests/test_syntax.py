@@ -29,4 +29,4 @@ def test_parser():
         # if file.name == "Factorial.cub":
         #    print(tree)
 
-        assert tree.decls
+        assert tree

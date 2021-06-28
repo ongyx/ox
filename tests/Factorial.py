@@ -1,0 +1,8 @@
+def factorial(x):
+    if x > 1:
+        return x * factorial(x - 1)
+
+    return 1
+
+
+a = factorial(5)  # a = 120
