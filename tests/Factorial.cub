@@ -6,11 +6,13 @@ import pragma.cub
 
 func factorial(x) returns {
 	
-	if x > 1 {
-		return x * factorial(x - 1)
+	n = 0
+
+	for i in range(x) {
+		n *= i
 	}
 	
-	return 1
+	return n
 }
 
 a = factorial(5) // a = 120

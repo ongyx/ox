@@ -2,8 +2,6 @@ n = 1
 
 if n == 2 {
   well = 2
-} else if n == 3 {
-  well = 3
 } else {
   well = 4
 }

@@ -6,15 +6,19 @@ import pragma.cub
 
 
 func fibonacci(n) returns {
-	if n == 0 {
-		return 0
+
+	a = 0
+	b = 1
+	c = nil
+
+	for _ in range(n) {
+		c = a + b
+		a = b
+		b = c
 	}
 
-	if n == 1 {
-		return 1
-	}
+	return c
 
-	return fibonacci(n - 1) + fibonacci(n - 2)
 }
 
 a = fibonacci(10) // a = 55

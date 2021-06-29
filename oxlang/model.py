@@ -110,8 +110,15 @@ class Function(Variable):
     def compile(self):
         return ast.FunctionDef(
             name=self.name,
-            args=[ast.arg(a) for a in self.args],
+            args=ast.arguments(
+                posonlyargs=[],
+                args=[ast.arg(a) for a in self.args],
+                kwonlyargs=[],
+                kw_defaults=[],
+                defaults=[],
+            ),
             body=self.body.compile(),
+            decorator_list=[],
         )
 
 
@@ -178,21 +185,26 @@ class Body(Node):
         body = []
 
         for decl in self.decls:
+
             if isinstance(decl, Comment):
                 # ignore comments
                 continue
 
-            elif isinstance(decl, list):
-                # some decls must be made in the current scope (i.e C-style loops).
-                body.extend(decl)
+            node = decl.compile()
+
+            if isinstance(node, list):
+                # some decls Must be made in the current scope (i.e C-style loops).
+                body.extend(node)
 
             else:
                 # statement/expression
-                node = decl.compile()
-
                 if isinstance(node, (ast.Call, ast.Attribute, ast.Name, ast.Constant)):
                     # must be wrapped in an Expr object first.
                     node = ast.Expr(value=node)
+
+                elif isinstance(decl, Import):
+                    if decl.module.name == "pragma":
+                        continue
 
                 body.append(node)
 
@@ -246,23 +258,39 @@ class Index(Node):
 class Conditional(Node):
     cond: Any
     body: Body
-    # if it is a body, it is 'else'
-    # if it is a conditional, it is 'else if'
-    # if None, no more else ifs or elses
-    orelse: Optional[Union[Conditional, Body]] = None
+    # only the root 'if' conditional will have this set to a list of the else ifs.
+    chain: Optional[List[Union[Conditional, Body]]] = None
 
     def compile(self):
 
-        if self.orelse is None:
-            orelse = []
-        else:
-            orelse = self.orelse.compile()
+        root = ast.If(test=self.cond.compile(), body=self.body.compile(), orelse=[])
 
-        if not isinstance(orelse, list):
-            # Conditionals must be wrapped in a list. Bodies are already lists.
-            orelse = [orelse]
+        if self.chain is None:
+            return root
 
-        return ast.If(test=self.cond.compile(), body=self.body.compile(), orelse=orelse)
+        node = root
+
+        for cond in self.chain:
+            next_node = cond.compile()
+
+            if isinstance(next_node, ast.If):
+                # wrap it in a list first
+                node.orelse = [next_node]
+
+            else:
+                node.orelse = next_node
+
+            node = next_node
+
+
+class Continue(Node):
+    def compile(self):
+        return ast.Continue()
+
+
+class Break(Node):
+    def compile(self):
+        return ast.Break()
 
 
 @dataclass
@@ -315,11 +343,15 @@ class ForInLoop(Node):
     body: Body
 
     def compile(self):
+        target = self.var.compile()
+        target.ctx = ast.Store()
+
         return ast.For(
-            target=self.var.compile(),
-            expr=self.expr.compile(),
+            target=target,
+            iter=self.expr.compile(),
             body=self.body.compile(),
             orelse=[],  # We dont support elses after loops yet.
+            type_comment="",
         )
 
 
@@ -329,6 +361,9 @@ class Import(Node):
     names: Dict[str, str]
 
     def compile(self):
+        if self.module.name == "pragma":
+            return
+
         if self.names:
             return ast.ImportFrom(
                 module=self.module.raw(),

@@ -1,5 +1,6 @@
 # coding: utf8
 
+import ast
 import pathlib
 
 from oxlang.syntax import Lexer, Parser  # type:ignore
@@ -22,11 +23,11 @@ def test_parser():
 
         code = file.read_text()
 
-        print(file.name)
+        print(f"* {file.name}")
 
         tree = parser.parse_text(code, filename=file.name)
+        module = ast.Module(body=tree, type_ignores=[])
+        ast.fix_missing_locations(module)
 
-        # if file.name == "Factorial.cub":
-        #    print(tree)
-
-        assert tree
+        with (curdir / f"{file.stem}.ast").open("w") as f:
+            f.write(ast.dump(module, indent=4))

@@ -11,7 +11,7 @@ func isPrime(num) returns {
 		return false
 	}
 	
-	max = sqrt(num)
+	max = math.sqrt(num)
 	
 	for i = 0, i < max, i += 2 {
 		m = mod(num, 2)

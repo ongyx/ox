@@ -234,6 +234,11 @@ class Parser(sly.Parser):
         "comment",
     )
     def declaration(self, p):
+        if p[0] == "continue":
+            return model.Continue(*_loc(p))
+        elif p[0] == "break":
+            return model.Break(*_loc(p))
+
         return p[0]
 
     @_("IMPORT id DOT LPAREN ID { COMMA ID } RPAREN")
@@ -261,7 +266,7 @@ class Parser(sly.Parser):
         if module.name == "pragma":
             self.pragmas.add(Pragma[module.attrs[0].upper()])
 
-        if p.TIMES:
+        if p[2]:
             names["*"] = None
 
         return model.Import(*_loc(p), module, names)
